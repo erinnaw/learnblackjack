@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Learn BlackJack</title>
+
+    <!--Bootstrap CSS-->
+
+    <!--Load Dependecies-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js" crossorigin></script>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+
+<body class="main-container">
+    <div class="grid-scoreboard-container" id="scoreboard">
+        <span class="helper-item">Score ($):</span><span class="helper-item" id="score"></span>
+        <div></div>
+        <span class="helper-item">Bet ($):</span><span class="helper-item" id="bet"></span>
+    </div>
+
+    <div class="grid-blackjack-container-col">
+        <div class="grid-helper-container" id="helper">
+            <span class="helper-subheader">Probabilities</span>
+            <div class="grid-helper-container-col">
+                <span class="helper-item">Total Cards Left:</span>
+                <span class="helper-item" id="total-cards"></span>
+            </div>
+            <div class="grid-helper-container-col">
+                <span class="helper-item">Type</span>
+                <span class="helper-item">(%)</span>
+                <span class="helper-item">Qty</span>
+
+                <span class="helper-item">2:</span><span class="helper-item" id="card-2"></span><span
+                    class="helper-item" id="card-left-2"></span>
+                <span class="helper-item">3:</span><span class="helper-item" id="card-3"></span><span
+                    class="helper-item" id="card-left-3"></span>
+                <span class="helper-item">4:</span><span class="helper-item" id="card-4"></span><span
+                    class="helper-item" id="card-left-4"></span>
+                <span class="helper-item">5:</span><span class="helper-item" id="card-5"></span><span
+                    class="helper-item" id="card-left-5"></span>
+                <span class="helper-item">6:</span><span class="helper-item" id="card-6"></span><span
+                    class="helper-item" id="card-left-6"></span>
+                <span class="helper-item">7:</span><span class="helper-item" id="card-7"></span><span
+                    class="helper-item" id="card-left-7"></span>
+                <span class="helper-item">8:</span><span class="helper-item" id="card-8"></span><span
+                    class="helper-item" id="card-left-8"></span>
+                <span class="helper-item">9:</span><span class="helper-item" id="card-9"></span><span
+                    class="helper-item" id="card-left-9"></span>
+                <span class="helper-item">10:</span><span class="helper-item" id="card-10"></span><span
+                    class="helper-item" id="card-left-10"></span>
+                <span class="helper-item">J:</span><span class="helper-item" id="card-J"></span><span
+                    class="helper-item" id="card-left-J"></span>
+                <span class="helper-item">Q:</span><span class="helper-item" id="card-Q"></span><span
+                    class="helper-item" id="card-left-Q"></span>
+                <span class="helper-item">K:</span><span class="helper-item" id="card-K"></span><span
+                    class="helper-item" id="card-left-K"></span>
+                <span class="helper-item">A:</span><span class="helper-item" id="card-A"></span><span
+                    class="helper-item" id="card-left-A"></span>
+            </div>
+            <span class="helper-subheader">EV</span>
+            <div class="grid-helper-container-col">
+                <span class="helper-item" id="helper-2">2: +1</span>
+                <div></div>
+                <span class="helper-item" id="helper-3">3: +1</span>
+                <span class="helper-item" id="helper-4">4: +1</span>
+                <div></div>
+                <span class="helper-item" id="helper-5">5: +1</span>
+                <span class="helper-item" id="helper-6">6: +1</span>
+                <div></div>
+                <span class="helper-item" id="helper-7">7: 0</span>
+                <span class="helper-item" id="helper-8">8: 0</span>
+                <div></div>
+                <span class="helper-item" id="helper-9">9: 0</span>
+                <span class="helper-item" id="helper-10">10: -1</span>
+                <div></div>
+                <span class="helper-item" id="helper-J">J: -1</span>
+                <span class="helper-item" id="helper-Q">Q: -1</span>
+                <div></div>
+                <span class="helper-item" id="helper-K">K: -1</span>
+                <span class="helper-item" id="helper-A">A: -1</span>
+                <div></div>
+                <div></div>
+                <span class="helper-item">EV score:</span><span class="helper-item" id="EV-score"></span>
+            </div>
+
+            <span class="helper-subheader">Recommended Move</span>
+            <span class="helper-item" id="recommended-move"></span>
+        </div>
+
+        <div class="grid-game-container" id="game">
+            <div class="dealer-deck" id="dealer-deck">
+                <span class="text-dealer" id="dealer">Dealer</span>
+                <div class="dealer-cards" id="dealer-cards"></div>
+            </div>
+
+            <div class="deck" id="deck">
+                <img src="static/image/card-back.png" class="card-img"></img>
+                <img src="static/image/chips.png" class="chips-img"></img>
+                <div class="bet-amount" id="bet-amount"></div>
+                <span class="arrow-left" id="arrow-left">&NestedLessLess;</span>
+                <span class="arrow-right" id="arrow-right">&NestedGreaterGreater;</span>
+                <div class="endround-screen" id="endround-screen">
+                    <span class="game-text" id="game-text"></span>
+                    <span class="next-round-text" id="next-round-text"></span><span class="arrow-next"
+                        id="arrow-next">&#x022D9;</span>
+                </div>
+            </div>
+
+            <div class="player-deck" id="player-deck">
+                <span class="text-player" id="player">Player</span>
+                <div class="player-cards" id="player-cards"></div>
+                <div class="c1" id="c1"></div>
+                <div class="c2" id="c2"></div>
+                <div class="grid-player-menu">
+                    <div class="player-menu-button" id="hit">Hit</div>
+                    <div class="player-menu-button" id="stand">Stand</div>
+                    <div class="player-menu-button" id="doubledown">Double Down</div>
+                    <div class="player-menu-button" id="split">Split</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-menu-container" id="menu">
+        <span class="menu-item" id="new-game">New Game</span>
+        <div></div>
+        <span class="menu-item" id="simulate-game">Simulate Game</span>
+        <div></div>
+        <span class="menu-item" id="back-to-main-menu">Back to Main Menu</span>
+    </div>
+
+    <script src="static/js/blackjack.js"></script>
+</body>
+
+</html>
