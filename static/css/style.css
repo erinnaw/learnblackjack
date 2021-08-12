@@ -1,38 +1,38 @@
 /* main.html */
 
 .main-menu-header {
-    font-size: 36px;
-    height: 50px;
-    width: 600px;
-    line-height: 50px;
-    text-align: center;
-    margin: auto;
-    margin-top: 50px;
+  font-size: 36px;
+  height: 50px;
+  width: 600px;
+  line-height: 50px;
+  text-align: center;
+  margin: auto;
+  margin-top: 50px;
 }
 
 .load-item {
-    margin: auto;
-    height: 200px;
-    width: 600px;
-    line-height: 200px;
-    text-align: center;
+  margin: auto;
+  height: 200px;
+  width: 600px;
+  line-height: 200px;
+  text-align: center;
 }
 
 .grid-main-menu {
-    display: grid;
-    grid-template-rows: auto auto auto auto;
-    margin: auto;
-    margin-top: 50px;
-    height: 200px;
-    width: 200px;
-    text-align: center;
-    border: 3px solid black;
-    border-radius: 20px;
+  display: grid;
+  grid-template-rows: auto auto auto auto;
+  margin: auto;
+  margin-top: 50px;
+  height: 200px;
+  width: 200px;
+  text-align: center;
+  border: 3px solid black;
+  border-radius: 20px;
 }
 
 .main-menu-item {
-    position: relative;
-    line-height: 50px;
+  position: relative;
+  line-height: 50px;
 }
 
 /* blackjack.html */
@@ -40,376 +40,455 @@
 /* scoreboard */
 
 .main-container {
-    width: 1200px;
-    height: 900px;
+  width: 1200px;
+  height: 900px;
 }
 
 .grid-scoreboard-container {
-    display: grid;
-    grid-template-columns: 15% 15% 40% 15% 15%;
-    font-size: 30px;
-    width: 80%;
-    height: 50px; 
-    line-height: 50px;
-    padding-left: 20px;
-    padding-right: 20px;
-    margin: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    border: 3px solid black;
-    border-radius: 20px;
+  display: grid;
+  grid-template-columns: 15% 15% 40% 14% 8% 8%;
+  font-size: 30px;
+  width: 80%;
+  height: 50px;
+  line-height: 50px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 3px solid black;
+  border-radius: 20px;
 }
 
 /* helper */
 
 .grid-blackjack-container-col {
-    display: grid;
-    grid-template-columns: 20% 80%;
-    width: 100%;
-    height: 700px;
-    margin: auto;
-    border: 3px solid black;
-    border-radius: 20px;
-    overflow: hidden;
+  display: grid;
+  grid-template-columns: 20% 80%;
+  width: 100%;
+  height: 700px;
+  margin: auto;
+  border: 3px solid black;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
 .grid-helper-container {
-    display: grid;
-    grid-template-rows: auto auto auto auto auto;
-    border-right: 3px solid black;
-    overflow: hidden;
-    padding-top: 10px;
-    padding-bottom: 10px;
+  display: grid;
+  grid-template-rows: auto auto auto auto auto;
+  border-right: 3px solid black;
+  overflow: hidden;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .grid-helper-container-col {
-    display: grid;
-    grid-template-columns: auto auto auto;
-    grid-template-rows: auto;
-    padding-left: 20px;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-template-rows: auto;
+  padding-left: 20px;
 }
 
 .helper-subheader {
-    position: relative;
-    background-color: blanchedalmond;
-    width: 100%;
-    height: 50px;
-    line-height: 50px;
-    margin: auto;
-    padding-left: 20px;
+  position: relative;
+  background-color: blanchedalmond;
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  margin: auto;
+  padding-left: 20px;
 }
 
 .helper-item {
-
-
 }
 
 .highlight {
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 1s;
-    animation: fadein 0.5s, fadeout 1s 0.5s;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 1s;
+  animation: fadein 0.5s, fadeout 1s 0.5s;
 }
 
 @-webkit-keyframes fadein {
-  from {background-color: rgba(161, 69, 69, 0);}
-  to {background-color: rgba(255, 0, 0, 1);}
+  from {
+    background-color: rgba(161, 69, 69, 0);
+  }
+  to {
+    background-color: rgba(255, 0, 0, 1);
+  }
 }
 
 @keyframes fadein {
-  from {background-color: rgba(161, 69, 69, 0);}
-  to {background-color: rgba(255, 0, 0, 1);}
+  from {
+    background-color: rgba(161, 69, 69, 0);
+  }
+  to {
+    background-color: rgba(255, 0, 0, 1);
+  }
 }
 
 @-webkit-keyframes fadeout {
-  from {background-color: rgba(255, 0, 0, 1);}
-  to {background-color: rgba(161, 69, 69, 0);}
+  from {
+    background-color: rgba(255, 0, 0, 1);
+  }
+  to {
+    background-color: rgba(161, 69, 69, 0);
+  }
 }
 
 @keyframes fadeout {
-  from {background-color: rgba(255, 0, 0, 1);}
-  to {background-color: rgba(161, 69, 69, 0);}
+  from {
+    background-color: rgba(255, 0, 0, 1);
+  }
+  to {
+    background-color: rgba(161, 69, 69, 0);
+  }
 }
 
 #recommended-move {
-    text-align: center;
-    height: 50px;
+  text-align: center;
+  height: 50px;
 }
 
 /* game */
 
 .grid-game-container {
-    position: relative;
-    display: grid;
-    grid-template-rows: 30% 30% 40%;
-    background-color: rgb(120, 214, 120);
+  position: relative;
+  display: grid;
+  grid-template-rows: 30% 30% 40%;
+  background-color: rgb(120, 214, 120);
 }
 
 .dealer-deck {
-    position: relative;
-    text-align: center;
+  position: relative;
+  text-align: center;
 }
 
 .dealer-cards {
-    position: absolute;
-    height: 200px;
-    width: 940px;
-    left: 1%;
+  position: absolute;
+  height: 200px;
+  width: 940px;
+  left: 1%;
 }
 
 .deck {
-    display: grid;
-    grid-template-columns: 50% 50%;
-    margin: auto;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  margin: auto;
 }
 
 .endround-screen {
-    position: absolute;
-    visibility: hidden;
-    z-index: 20;
-    width: 100%;
-    height: 100%;
-    background-color: rgb(255, 255, 255, 0.5);
-    text-align: center;
-    line-height: 615px;
+  position: absolute;
+  visibility: hidden;
+  z-index: 20;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(255, 255, 255, 0.5);
+  text-align: center;
+  line-height: 615px;
 }
 
 .game-text {
-    position: absolute;
-    font-size: 100px;
-    letter-spacing: 10px;
-    width: 100%;
-    height: 120px;
-    line-height: 120px;
-    top: 44%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  font-size: 70px;
+  letter-spacing: 7px;
+  width: 100%;
+  height: 100px;
+  line-height: 100px;
+  top: 44%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .next-round-text {
-    position: absolute;
-    font-size: 25px;
-    letter-spacing: 2px;
-    width: 300px;
-    height: 25px;
-    line-height: 25px;
-    top: 56%;
-    left: 73%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  font-size: 25px;
+  letter-spacing: 2px;
+  width: 300px;
+  height: 25px;
+  line-height: 25px;
+  top: 56%;
+  left: 73%;
+  transform: translate(-50%, -50%);
 }
 
 .next-round-text:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .arrow-next {
-    position: absolute;
-    font-size: 25px;
-    letter-spacing: 2px;
-    width: 100px;
-    height: 25px;
-    line-height: 25px;
-    top: 56%;
-    left: 84%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  font-size: 25px;
+  letter-spacing: 2px;
+  width: 100px;
+  height: 25px;
+  line-height: 25px;
+  top: 56%;
+  left: 84%;
+  transform: translate(-50%, -50%);
 }
 
 .arrow-bounceright {
-    animation-duration: 1s;
-    animation-name: bounceright;
-    animation-iteration-count: infinite;
+  animation-duration: 1s;
+  animation-name: bounceright;
+  animation-iteration-count: infinite;
 }
 
 @-webkit-keyframes bounceright {
-  0%, 20%, 40%, 60%, 80%, 100% {-webkit-transform: translate(-50%, -50%);}
-  50% {-webkit-transform: translate(-35%, -50%);}
-} 
+  0%,
+  20%,
+  40%,
+  60%,
+  80%,
+  100% {
+    -webkit-transform: translate(-50%, -50%);
+  }
+  50% {
+    -webkit-transform: translate(-35%, -50%);
+  }
+}
 
-@keyframes bounceright { 
-  0%, 20%, 40%, 60%, 80%, 100% {transform: translate(-50%, -50%);}
-  50% {transform: translate(-35%, -50%);}
-} 
+@keyframes bounceright {
+  0%,
+  20%,
+  40%,
+  60%,
+  80%,
+  100% {
+    transform: translate(-50%, -50%);
+  }
+  50% {
+    transform: translate(-35%, -50%);
+  }
+}
 
-.bounceright { 
+.bounceright {
   -webkit-animation-name: bounce;
   animation-name: bounce;
 }
 
 .bet-amount {
-    position: absolute;
-    top: 40%;
-    right: 27%;
-    font-size: 50px;
-    border: 3px solid black;
-    border-radius: 10px;
-    width: 100px;
-    height: 50px;
-    line-height: 50px;
-    background-color: gold;
-    text-align: center;
+  position: absolute;
+  top: 40%;
+  right: 27%;
+  font-size: 50px;
+  border: 3px solid black;
+  border-radius: 10px;
+  width: 100px;
+  height: 50px;
+  line-height: 50px;
+  background-color: gold;
+  text-align: center;
 }
 
 .bet-amount:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .arrow-left {
-    position: absolute;
-    font-size: 50px;
-    top: 44%;
-    left: 58%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  font-size: 50px;
+  top: 44%;
+  left: 58%;
+  transform: translate(-50%, -50%);
 }
 
 .arrow-right {
-    position: absolute;
-    font-size: 50px;
-    top: 44%;
-    left: 77%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  font-size: 50px;
+  top: 44%;
+  left: 77%;
+  transform: translate(-50%, -50%);
 }
 
-.arrow-left:hover{
-    font-size: 70px;
-    cursor: pointer;
+.arrow-left:hover {
+  font-size: 70px;
+  cursor: pointer;
 }
 
-.arrow-right:hover{
-    font-size: 70px;
-    cursor: pointer;
+.arrow-right:hover {
+  font-size: 70px;
+  cursor: pointer;
 }
 
 .dealer {
-    position: absolute;
-    z-index: 1;
+  position: absolute;
+  z-index: 1;
 }
 
 .player {
-    position: absolute;
-    z-index: 1;
+  position: absolute;
+  z-index: 1;
 }
 
 .card-img {
-    width: 150px;
-    height: 200px;
-    border: 2px solid black;
-    border-radius: 10px;
+  width: 150px;
+  height: 200px;
+  border: 2px solid black;
+  border-radius: 10px;
 }
 
 .chips-img {
-    width: 300px;
-    height: 100px;
-    margin-top: 50px;
-    opacity: 0.3;
+  width: 300px;
+  height: 100px;
+  margin-top: 50px;
+  opacity: 0.3;
 }
 
 .player-deck {
-    position: relative;
-    display: grid;
-    grid-template-rows: 80% 20%;
-    text-align: center;
-    line-height: 200px;
+  position: relative;
+  display: grid;
+  grid-template-rows: 80% 20%;
+  text-align: center;
+  line-height: 200px;
 }
 
 .player-cards {
-    position: absolute;
-    height: 200px;
-    width: 940px;
-    bottom: 25%;
-    left: 1%;
+  position: absolute;
+  height: 200px;
+  width: 940px;
+  bottom: 25%;
+  left: 1%;
 }
 
 .text-dealer {
-    position: absolute;
-    font-size: 100px;
-    letter-spacing: 10px;
-    text-align: center;
-    opacity: 0.3;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  font-size: 100px;
+  letter-spacing: 10px;
+  text-align: center;
+  opacity: 0.3;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .text-player {
-    position: absolute;
-    font-size: 100px;
-    letter-spacing: 10px;
-    text-align: center;
-    opacity: 0.3;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  font-size: 100px;
+  letter-spacing: 10px;
+  text-align: center;
+  opacity: 0.3;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.d1 {
+  position: absolute;
+  z-index: 10;
+  background-color: rgb(255, 255, 255, 0.5);
+  font-size: 50px;
+  border: 3px solid black;
+  border-radius: 10px;
+  width: 70px;
+  height: 70px;
+  line-height: 70px;
+  top: -111%;
+  left: 91%;
+  transform: translate(-50%, -50%);
 }
 
 .c1 {
-    position: absolute;
-    font-size: 50px;
-    border: 3px solid black;
-    border-radius: 10px;
-    width: 70px;
-    height: 70px;
-    line-height: 70px;
-    top: 17%;
-    left: 91%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  z-index: 10;
+  background-color: rgb(255, 255, 255, 0.5);
+  font-size: 50px;
+  border: 3px solid black;
+  border-radius: 10px;
+  width: 70px;
+  height: 70px;
+  line-height: 70px;
+  top: 17%;
+  left: 91%;
+  transform: translate(-50%, -50%);
 }
 
 .c2 {
-    position: absolute;
-    font-size: 50px;
-    border: 3px solid black;
-    border-radius: 10px;
-    width: 70px;
-    height: 70px;
-    line-height: 70px;
-    top: 54%;
-    left: 91%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  z-index: 10;
+  background-color: rgb(255, 255, 255, 0.5);
+  font-size: 50px;
+  border: 3px solid black;
+  border-radius: 10px;
+  width: 70px;
+  height: 70px;
+  line-height: 70px;
+  top: 54%;
+  left: 91%;
+  transform: translate(-50%, -50%);
+}
+
+.c3 {
+  position: absolute;
+  z-index: 10;
+  background-color: rgb(255, 255, 255, 0.5);
+  font-size: 50px;
+  border: 3px solid black;
+  border-radius: 10px;
+  width: 70px;
+  height: 70px;
+  line-height: 70px;
+  top: 17%;
+  left: 43%;
+  transform: translate(-50%, -50%);
+}
+
+.c4 {
+  position: absolute;
+  z-index: 10;
+  background-color: rgb(255, 255, 255, 0.5);
+  font-size: 50px;
+  border: 3px solid black;
+  border-radius: 10px;
+  width: 70px;
+  height: 70px;
+  line-height: 70px;
+  top: 54%;
+  left: 43%;
+  transform: translate(-50%, -50%);
 }
 
 .grid-player-menu {
-    position: absolute;
-    display: grid;
-    width: 100%;
-    bottom: 5%;
-    grid-template-columns: auto auto auto auto;
+  position: absolute;
+  display: grid;
+  width: 100%;
+  bottom: 5%;
+  grid-template-columns: auto auto auto auto;
 }
 
 .player-menu-button {
-    position: relative;
-    border: 2px solid black;
-    border-radius: 10px;
-    width: 200px;
-    height: 30px;
-    line-height: 30px;
-    margin: auto;
+  position: relative;
+  border: 2px solid black;
+  border-radius: 10px;
+  width: 200px;
+  height: 30px;
+  line-height: 30px;
+  margin: auto;
 }
 
 .inactive {
-    background-color: grey;
+  background-color: grey;
 }
 
 .active {
-    background-color: gold;
+  background-color: gold;
 }
 
 /* menu */
 
 .grid-menu-container {
-    display: grid;
-    grid-template-columns: 20% 20% 20% 20% 20%;
-    width: 80%;
-    height: 50px; 
-    line-height: 50px;
-    padding-left: 20px;
-    padding-right: 20px;
-    margin: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    border: 3px solid black;
-    border-radius: 20px;
-    text-align: center;
+  display: grid;
+  grid-template-columns: 20% 20% 20% 20% 20%;
+  width: 80%;
+  height: 50px;
+  line-height: 50px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 3px solid black;
+  border-radius: 20px;
+  text-align: center;
 }
 
 .menu-item {
-
-
 }

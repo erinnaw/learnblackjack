@@ -93,6 +93,11 @@ class Deck {
         return this.stack.pop();
     }
 
+    pop_by_id(id) {
+        let index = this.stack.findIndex(element => element === id);
+        return this.stack.splice(index, 1);
+    }
+
     reset() {
         this.c2.set_qty(4);
         this.c3.set_qty(4);
@@ -122,6 +127,8 @@ class Player {
     constructor() {
         this.card_shown = 0;
         this.cards = [];
+        this.cards_split = [];
+        this.hasSplit = false;
     }
 
     add_card_shown(id) {
@@ -130,6 +137,122 @@ class Player {
 
     push_cards(id) {
         this.cards.push(id);
+    }
+
+    push_cards_split(id) {
+        this.cards_split.push(id);
+    }
+
+    calculate_hand_split() {
+        let total = 0, a_counter = 0;
+        let c1 = 0, c2 = 0;
+        let calculations = [];
+
+        for (let i = 0; i < this.cards_split.length; i++) {
+            if (this.cards_split[i] === 12) {
+                a_counter++;
+            }
+            else {
+                if (this.cards_split[i] >= 0 && this.cards_split[i] <= 8) {
+                    total += (this.cards_split[i] + 2);
+                }
+                else if (this.cards_split[i] >= 9 && this.cards_split[i] <= 11) {
+                    total += 10;
+                }
+            }
+        }
+
+        c1 += total;
+
+        if (a_counter === 1) {
+            let c2_flag = false;
+
+            if (total < 11) {
+                c2_flag = true;
+                c1 += 11;
+            }
+            else {
+                c1 += 1;
+            }
+
+            if (c2_flag) {
+                c2 = total + 1;
+                calculations.push(c2);
+            }
+        }
+        else if (a_counter > 1) {
+            let c2_flag = false;
+
+            if ((total + 11 + (a_counter - 1)) <= 21) {
+                c2_flag = true;
+                c1 = 11;
+
+                for (let i = 0; i < a_counter - 1; i++) {
+                    c1 += 1;
+                }
+            }
+            else {
+                for (let i = 0; i < a_counter - 1; i++) {
+                    c1 += 1;
+                }
+            }
+
+            if (c2_flag) {
+                for (let i = 0; i < a_counter - 1; i++) {
+                    c2 = total + 1;
+                }
+
+                calculations.push(c2);
+            }
+        }
+
+        calculations.push(c1);
+
+        return calculations;
+    }
+
+    calculate_split_best() {
+        let total = 0;
+        let a_counter = 0;
+
+        for (let i = 0; i < this.cards_split.length; i++) {
+            if (this.cards_split[i] === 12) {
+                a_counter++;
+            }
+            else {
+                if (this.cards_split[i] >= 0 && this.cards_split[i] <= 8) {
+                    total += (this.cards_split[i] + 2);
+                }
+                else if (this.cards_split[i] >= 9 && this.cards_split[i] <= 11) {
+                    total += 10;
+                }
+            }
+        }
+
+        if (a_counter === 1) {
+            if (total < 11) {
+                total += 11;
+            }
+            else {
+                total += 1;
+            }
+        }
+        else if (a_counter > 1) {
+            if ((total + 11 + (a_counter - 1)) <= 21) {
+                total = 11;
+
+                for (let i = 0; i < a_counter - 1; i++) {
+                    total += 1;
+                }
+            }
+            else {
+                for (let i = 0; i < a_counter - 1; i++) {
+                    total += 1;
+                }
+            }
+        }
+
+        return total;
     }
 
     calculate_hand() {
@@ -270,6 +393,18 @@ class Player {
         return total;
     }
 
+    get_card_shown() {
+        if (this.card_shown === 12) {
+            return 11;
+        }
+        else if (this.card_shown >= 8) {
+            return 10;
+        }
+        else {
+            return this.card_shown + 2;
+        }
+    }
+
     get_hand() {
         arr = new Array(this.cards);
         arr.push(this.card_shown);
@@ -279,6 +414,8 @@ class Player {
 
     empty_hand() {
         this.cards = [];
+        this.cards_split = [];
+        this.hasSplit = false;
     }
 }
 
@@ -292,10 +429,12 @@ class Game {
 
         this.score = 0;
         this.bet = 10;
+        this.bet_split = 0;
         this.ev_value = 0;
         this.bet = 10;
         this.bet_increment = 10;
         this.max_bet = 100;
+        this.startSplit = false;
 
         this.probabilities = new Map();
         this.probabilities.set(0, this.deck.cards.get(0).get_qty() / this.deck.stack.length * 100);
@@ -329,6 +468,10 @@ class Game {
         $('#doubledown').addClass("inactive");
         $('#split').addClass("inactive");
 
+        $('#score').css('color', 'black');
+        $('#bet').css('color', 'black');
+        $('#bet-split').css('color', 'black');
+
         $('#bet-amount').html(this.bet);
         $('#total-cards').html(this.deck.stack.length);
         $('#game-text').html("");
@@ -338,8 +481,11 @@ class Game {
     }
 
     activate_bet_UI() {
+        $('#d1').css("visibility", "hidden");
         $('#c1').css("visibility", "hidden");
         $('#c2').css("visibility", "hidden");
+        $('#c3').css("visibility", "hidden");
+        $('#c4').css("visibility", "hidden");        
         $('#arrow-left').css("visibility", "visible");
         $('#arrow-right').css("visibility", "visible");
         $('#arrow-left').on('click');
@@ -347,6 +493,11 @@ class Game {
         $('#bet-amount').on('click');
         $('#bet-amount').css("visibility", "visible");
         $('#bet-amount').on('mouseover');
+
+        if (this.bet > 100) {
+            this.bet = 100;
+        }
+        
         $('#bet-amount').html(this.bet);
 
         $('#arrow-left').on("click", () => {
@@ -386,8 +537,13 @@ class Game {
         $('#bet-amount').off('click');
         $('#bet-amount').css("visibility", "hidden");
         $('#bet-amount').off('mouseover');
+        $('#d1').css("visibility", "visible");
         $('#c1').css("visibility", "visible");
         $('#c2').css("visibility", "visible");
+
+        $('#score').css('color', 'black');
+        $('#bet').css('color', 'black');
+        $('#bet-split').css('color', 'black');
     }
 
     update_probabilities_flipped_cards(id) {
@@ -452,6 +608,11 @@ class Game {
     update_scoreboard() {
         $('#score').html(this.score);
         $('#bet').html(this.bet);
+        $('#bet-split').html("");
+        
+        if (this.player.hasSplit) {
+            $('#bet-split').html(this.bet_split);
+        }
 
         if (this.score < 0) {
             $('#score').css("color", "red");
@@ -753,6 +914,7 @@ class Game {
         this.dealer.empty_hand();
         this.player.empty_hand();
 
+        this.startSplit = false;
         this.ev_value = 0;
         this.qty = 4 * 13;
         this.recommendation = "None";
@@ -775,6 +937,10 @@ class Game {
         $('#stand').addClass("inactive");
         $('#doubledown').addClass("inactive");
         $('#split').addClass("inactive");
+
+        $('#score').css('color', 'black');
+        $('#bet').css('color', 'black');
+        $('#bet-split').css('color', 'black');
     }
 
     dealer_hit() {
@@ -783,22 +949,59 @@ class Game {
     }
 
     player_hit() {
-        let id = this.deck.pop();
+        let id = 0;
 
-        this.player.push_cards(id);
+        if (this.startSplit) {
+            id = this.player.card_shown;
+            let removed = this.deck.pop_by_id(id);
+            this.player.push_cards(id);
+            this.startSplit = false;
+        }
+        else {
+            $('#split').off('click');
+            $('#split').removeClass('active');
+            $('#split').addClass('inactive');
+
+            id = this.deck.pop();
+            this.player.push_cards(id);
+        }
+
         this.update_probabilities_flipped_cards(id);
         this.update_ev(id);
-        this.update_recommendation();
 
         let c = this.player.calculate_hand();
 
-        $('#c1').html(c[0]);
-        $('#c2').html("");
+        if (this.player.hasSplit && !this.startSplit) {
+            id = this.deck.pop();
+            this.player.push_cards_split(id);
+            this.update_probabilities_flipped_cards(id);
+            this.update_ev(id);
 
-        if (c.length > 1) {
-            $('#c2').html(c[1]);
+            let c_s = this.player.calculate_hand_split();
+            $('#c1').html(c_s[0]);
+            $('#c2').html("-");
+
+            if (c_s.length > 1) {
+                $('#c2'). html(c_s[1]);
+            }
+
+            $('#c3').html(c[0]);
+            $('#c4').html("-");
+
+            if (c.length > 1) {
+                $('#c4').html(c[1]);
+            }
+        }
+        else {
+            $('#c1').html(c[0]);
+            $('#c2').html("-");
+
+            if (c.length > 1) {
+                $('#c2').html(c[1]);
+            }
         }
 
+        this.update_recommendation();
         $('#total-cards').html(this.deck.stack.length);
     }
 
@@ -846,33 +1049,135 @@ class Game {
         let player_hand = this.player.calculate_hand_best();
         let dealer_hand = this.dealer.calculate_hand_best();
 
-        if ((player_hand > dealer_hand && player_hand <= 21) || (player_hand <= 21 && dealer_hand > 21)) {
-            console.log("Player Win!");
-            $('#game-text').html("Player Win!");
-            this.score += this.bet;
-        }
-        else if ((player_hand < dealer_hand && dealer_hand <= 21) || (player_hand > 21 && dealer_hand <= 21)) {
-            console.log("Dealer Win!");
-            $('#game-text').html("Dealer Win!");
-            this.score -= this.bet;
-        }
-        else if (player_hand === dealer_hand) {
-            console.log("Draw!");
-            $('#game-text').html("Draw!");
-        }
-        else if (player_hand > 21 && dealer_hand > 21) {
-            console.log("Both Bust!");
-            $('#game-text').html("Both Bust!");
+        if (this.player.hasSplit) {
+            let player_split = this.player.calculate_split_best();
+            console.log(player_hand);
+            console.log(player_split);
+            console.log(dealer_hand);
+            
+            if (((player_split > dealer_hand && player_split <= 21) && (player_hand > dealer_hand && player_hand <= 21)) ||
+                (player_hand <= 21 && player_split <= 21 && dealer_hand > 21)) {
+                console.log("Player Wins Double!");
+                $('#game-text').html("Player Wins Double!");
+                this.score += this.bet;
+                this.score += this.bet_split;
+
+                $('#bet').css('color', 'green');
+                $('#bet-split').css('color', 'green');
+            }
+            else if (((player_split < dealer_hand && dealer_hand <= 21) || (player_split > 21 && dealer_hand <= 21)) && ((player_hand < dealer_hand && dealer_hand <= 21)) ||
+                (player_hand > 21 && dealer_hand <= 21)) {
+                console.log("Player Loses Double!");
+                $('#game-text').html("Player Loses Double!");
+                this.score -= this.bet;
+                this.score -= this.bet_split;
+
+                $('#bet').css('color', 'red');
+                $('#bet-split').css('color', 'red');
+            }
+            else if ((player_split === dealer_hand || (player_split > 21 && dealer_hand > 21)) && (player_hand === dealer_hand || (player_hand > 21 && dealer_hand > 21))) {
+                console.log("Double Draw!");
+                $('#game-text').html("Double Draw!");
+
+                $('#bet').css('color', 'black');
+                $('#bet-split').css('color', 'black');
+            }
+            else if (player_split > 21 && player_hand > 21 && dealer_hand > 21) {
+                console.log("All Bust");
+                $('#game-text').html("All Bust!");
+
+                $('#bet').css('color', 'black');
+                $('#bet-split').css('color', 'black');
+            }
+            else if ((player_split === dealer_hand || (player_split > 21 && dealer_hand > 21)) && ((player_hand > dealer_hand && player_hand <= 21) || (player_hand <= 21 && dealer_hand > 21))) {
+                console.log("Player Wins A Hand!");
+                $('#game-text').html("Player Wins A Hand!");
+                this.score += this.bet;
+
+                $('#bet').css('color', 'green');
+                $('#bet-split').css('color', 'black');
+            }
+            else if ((player_hand === dealer_hand || (player_hand > 21 && dealer_hand > 21)) && ((player_split > dealer_hand && player_split <= 21) || (player_split <= 21 && dealer_hand > 21))) {
+                console.log("Player Wins A Hand!");
+                $('#game-text').html("Player Wins A Hand!");
+                this.score += this.bet_split;
+
+                $('#bet').css('color', 'black');
+                $('#bet-split').css('color', 'green');
+            }
+            else if (((player_hand < dealer_hand && dealer_hand <= 21) || (player_hand > 21 && dealer_hand <= 21)) && (player_split === dealer_hand || (player_split > 21 && dealer_hand > 21))) {
+                console.log("Player Loses A Hand!");
+                $('#game-text').html("Player Loses A Hand!");
+                this.score -= this.bet; 
+
+                $('#bet').css('color', 'red');
+                $('#bet-split').css('color', 'black');
+            }
+            else if (((player_split < dealer_hand && dealer_hand <= 21) || (player_split > 21 && dealer_hand <= 21)) && (player_hand === dealer_hand || (player_hand > 21 && dealer_hand > 21))) {
+                console.log("Player Loses A Hand!");
+                $('#game-text').html("Player Loses A Hand!");
+                this.score -= this.bet_split; 
+
+                $('#bet').css('color', 'black');
+                $('#bet-split').css('color', 'red');
+            }
+            else if (((player_hand > dealer_hand && player_hand <= 21) || (dealer_hand > 21 && player_hand <= 21)) && ((player_split < dealer_hand && dealer_hand <= 21) || (player_split > 21 && dealer_hand <= 21))) {
+                console.log("Player Bets Cancel Out!");
+                $('#game-text').html("Player Bet Cancelled Out!");
+
+                $('#bet').css('color', 'green');
+                $('#bet-split').css('color', 'red');
+            }
+            else if (((player_split > dealer_hand && player_split <= 21) || (player_split <= 21 && dealer_hand > 21)) && ((player_hand < dealer_hand && dealer_hand <= 21) || (player_hand > 21 && dealer_hand <= 21))) {
+                console.log("Player Bets Cancel Out!");
+                $('#game-text').html("Player Bet Cancelled Out!");
+
+                $('#bet').css('color', 'red');
+                $('#bet-split').css('color', 'green');
+            }
+            else {
+                console.log("Error: Undetermined Winner");
+                $('#game-text').html("Error: Undetermined Winner");
+
+                $('#bet').css('color', 'black');
+                $('#bet-split').css('color', 'black');
+            }
         }
         else {
-            console.log("Who Won?");
-            $('#game-text').html("Who Won?");
+            if ((player_hand > dealer_hand && player_hand <= 21) || (player_hand <= 21 && dealer_hand > 21)) {
+                console.log("Player Win!");
+                $('#game-text').html("Player Win!");
+                $('#bet').css('color', 'green');
+                this.score += this.bet;
+            }
+            else if ((player_hand < dealer_hand && dealer_hand <= 21) || (player_hand > 21 && dealer_hand <= 21)) {
+                console.log("Dealer Win!");
+                $('#game-text').html("Dealer Win!");
+                $('#bet').css('color', 'red');
+                this.score -= this.bet;
+            }
+            else if (player_hand === dealer_hand) {
+                console.log("Draw!");
+                $('#game-text').html("Draw!");
+                $('#bet').css('color', 'black');
+            }
+            else if (player_hand > 21 && dealer_hand > 21) {
+                console.log("Both Bust!");
+                $('#game-text').html("Both Bust!");
+                $('#bet').css('color', 'black');
+            }
+            else {
+                console.log("Error: Undetermined Winner");
+                $('#bet').css('color', 'black');
+                $('#game-text').html("Error: Undetermined Winner");
+            }
         }
 
         for (let i = 0; i < this.dealer.cards.length; i++) {
             $(`#dealer-${i}-${this.dealer.cards[i]}`).attr('src', this.deck.cards.get(this.dealer.cards[i]).get_image());
         }
 
+        $('#d1').html(this.dealer.calculate_hand_best());
         this.update_scoreboard();
 
         //update ev and probabilities from dealer's hand
@@ -887,8 +1192,11 @@ class Game {
         $('#player-cards').html("");
         $('#game-text').html("");
         $('#endround-screen').css("visibility", "hidden");
+        $('#d1').css("visibility", "hidden");
         $('#c1').css("visibility", "hidden");
         $('#c2').css("visibility", "hidden");
+        $('#c3').css("visibility", "hidden");
+        $('#c4').css("visibility", "hidden");
 
         $('#hit').removeClass("active");
         $('#stand').removeClass("active");
@@ -900,33 +1208,42 @@ class Game {
         $('#doubledown').addClass("inactive");
         $('#split').addClass("inactive");
 
+        $('#score').css('color', 'black');
+        $('#bet').css('color', 'black');
+        $('#bet-split').css('color', 'black');
+
         this.update_scoreboard();
         this.activate_bet_UI();
-    }
-
-    //Doubledown lets you place an additional bet, equal to your ante, in return for another card
-    doubledown() {
-
-
-
-    }
-
-    //Split is an option when a player's initial two card hand has same value
-    split() {
-
-
-
+        this.startSplit = true;
     }
 
     //check if hand can hit, stand, dd and/or split
     calculate_available_moves() {
         let c = this.player.calculate_hand();
 
-        $('#c1').html(c[0]);
-        $('#c2').html("");
+        if (this.player.hasSplit) {
+            let c_s = this.player.calculate_hand_split();
+            $('#c1').html(c_s[0]);
+            $('#c2').html("-");
 
-        if (c.length > 1) {
-            $('#c2').html(c[1]);
+            if (c_s.length > 1) {
+                $('#c2').html(c_s[1]);
+            }
+
+            $('#c3').html(c[0]);
+            $('#c4').html("-");
+
+            if (c.length > 1) {
+                $('#c4').html(c[1]);
+            }
+        }
+        else {
+            $('#c1').html(c[0]);
+            $('#c2').html("-");
+
+            if (c.length > 1) {
+                $('#c2').html(c[1]);
+            }
         }
 
         if (c[0] < 21) {
@@ -935,11 +1252,29 @@ class Game {
                 $('#split').addClass("active");
 
                 $('#split').on("click", () => {
+                    this.player.hasSplit = true;
+                    this.bet_split = this.bet;
+                    this.player.push_cards_split(this.player.cards.pop());
+                    this.draw_player_hand();
 
+                    if (this.player.hasSplit) {
+                        $('#c3').css("visibility", "visible");
+                        $('#c4').css("visibility", "visible");
 
+                        let c = this.player.calculate_hand();
+                        $('#c3').html(c[0]);
+                        $('#c4').html("-");
 
+                        if (c.length > 1) {
+                            $('#c4').html(c[1]);
+                        }
+                    }
 
-
+                    $('#split').off('click');
+                    $('#split').removeClass('active');
+                    $('#split').addClass('inactive');
+                    this.update_scoreboard();
+                    //this.output_console();
                 });
             }
             else {
@@ -957,14 +1292,21 @@ class Game {
             $('#doubledown').addClass("active");
 
             $('#hit').off("click").on("click", () => {
-                this.player_hit();
-                this.draw_player_hand();
                 this.dealer_hit();
                 this.draw_dealer_hand();
+                this.player_hit();
+                this.draw_player_hand();
                 //this.output_console();
 
-                if (this.player.calculate_hand_best() >= 21) {
-                    this.reveal_hands();
+                if (this.player.hasSplit) {
+                    if (this.player.calculate_split_best() >= 21 || this.player.calculate_hand_best() >= 21) {
+                        this.reveal_hands();
+                    }
+                }
+                else {
+                    if (this.player.calculate_hand_best() >= 21) {
+                        this.reveal_hands();
+                    }
                 }
             });
 
@@ -973,13 +1315,22 @@ class Game {
                 this.reveal_hands();
             });
 
+            //player stands after taking an extra card
             $('#doubledown').on("click", () => {
+                this.bet *= 2;
 
+                if (this.player.hasSplit) {
+                    this.bet_split *= 2;
+                }
 
+                this.dealer_hit();
+                this.player_hit();
+                this.player_hit();
 
-
-
-
+                this.draw_dealer_hand();
+                this.draw_player_hand();
+                this.reveal_hands();
+                //this.output_console();
             });
         }
         else {
@@ -990,11 +1341,20 @@ class Game {
 
     output_console() {
         console.log("<----------------");
+        console.log("Dealer:");
         console.log(this.dealer.card_shown);
         console.log(this.dealer.cards);
+        console.log("Deck:");
         console.log(this.deck.stack);
+        console.log("Player:");
         console.log(this.player.card_shown);
         console.log(this.player.cards);
+        
+        if (this.player.hasSplit) {
+            console.log("Player (split):");
+            console.log(this.player.cards_split);
+        }
+
         console.log("---------------->");
     }
 
@@ -1003,12 +1363,12 @@ class Game {
         $(`#dealer-shown-${this.dealer.card_shown}`).css('left', `0%`);
         $(`#dealer-shown-${this.dealer.card_shown}`).css('z-index', '0');
 
-        let pos = 42 - ((this.dealer.cards.length - 1) * 20 / 2);
-        let pos_offset = 10;
+        let pos = $('#dealer-cards').width() / 3;
+        let pos_offset = $('.card-img').width() / 3;
 
         for (let i = 0; i < this.dealer.cards.length; i++) {
             $('#dealer-cards').append(`<img src=\"static/image/card-back.png\" class=\"card-img dealer\" id=\"dealer-${i}-${this.dealer.cards[i]}\"></img>`);
-            $(`#dealer-${i}-${this.dealer.cards[i]}`).css('left', `${pos}%`);
+            $(`#dealer-${i}-${this.dealer.cards[i]}`).css('left', `${pos}px`);
             $(`#dealer-${i}-${this.dealer.cards[i]}`).css('z-index', `${i + 1}`);
 
             pos += pos_offset;
@@ -1020,12 +1380,29 @@ class Game {
         $(`#player-shown-${this.player.card_shown}`).css('left', `0%`);
         $(`#player-shown-${this.player.card_shown}`).css('z-index', '0');
 
-        let pos = 42 - ((this.player.cards.length - 1) * 20 / 2);
-        let pos_offset = 10;
+        let split_offset = $('#player-cards').width() / 3;
+        let pos_offset = $('.card-img').width() / 3;
+
+        if (this.player.hasSplit) {
+            split_offset = $('#player-cards').width() / 4;
+            let pos_split = split_offset * 2 + ((this.player.cards.length - 1) * ($('.card-img').width() / 3 ) / 2);
+
+            for (let i = 0; i < this.player.cards_split.length; i++) {
+                $('#player-cards').append(`<img src=\"${this.deck.cards.get(this.player.cards_split[i]).get_image()}\" class=\"card-img player\" id=\"split-${i}-${this.player.cards_split[i]}\"></img>`);
+                $(`#split-${i}-${this.player.cards_split[i]}`).css('left', `${pos_split}px`);
+                $(`#split-${i}-${this.player.cards_split[i]}`).css('z-index', `${i + 1}`);
+
+                pos_split += pos_offset;
+            }
+
+            split_offset /= 2;
+        }
+
+        let pos = split_offset - ((this.player.cards.length - 1) * ($('.card-img').width() / 3 ) / 2);
 
         for (let i = 0; i < this.player.cards.length; i++) {
             $('#player-cards').append(`<img src=\"${this.deck.cards.get(this.player.cards[i]).get_image()}\" class=\"card-img player\" id=\"player-${i}-${this.player.cards[i]}\"></img>`);
-            $(`#player-${i}-${this.player.cards[i]}`).css('left', `${pos}%`);
+            $(`#player-${i}-${this.player.cards[i]}`).css('left', `${pos}px`);
             $(`#player-${i}-${this.player.cards[i]}`).css('z-index', `${i + 1}`);
 
             pos += pos_offset;
@@ -1038,20 +1415,27 @@ class Game {
 
         this.dealer.add_card_shown(this.deck.pop());
         this.player.add_card_shown(this.deck.pop());
-
         this.update_probabilities_flipped_cards(this.dealer.card_shown);
         this.update_probabilities_flipped_cards(this.player.card_shown);
+        $('#d1').html(this.dealer.get_card_shown());
+
+        this.dealer_hit();
+        this.player_hit();
+
         this.update_ev(this.dealer.card_shown);
         this.update_ev(this.player.card_shown);
         this.update_scoreboard();
 
-        this.dealer_hit();
         this.draw_dealer_hand();
-        this.player_hit();
         this.draw_player_hand();
 
+        $('#d1').css("visibility", "visible");
         $('#c1').css("visibility", "visible");
         $('#c2').css("visibility", "visible");
+
+        $('#score').css('color', 'black');
+        $('#bet').css('color', 'black');
+        $('#bet-split').css('color', 'black');
 
         if (this.player.calculate_hand_best() >= 21) {
             this.reveal_hands();
@@ -1066,11 +1450,14 @@ class Game {
 $('#new-game').on('click', () => {
     delete game;
     let game = new Game();
+    game.startSplit = true;
 
     $('#dealer-cards').html("");
     $('#player-cards').html("");
     $('#c1').css("visibility", "hidden");
     $('#c2').css("visibility", "hidden");
+    $('#c3').css("visibility", "hidden");
+    $('#c4').css("visibility", "hidden");
 });
 
 $('#back-to-main-menu').on('click', () => {
@@ -1078,4 +1465,5 @@ $('#back-to-main-menu').on('click', () => {
 });
 
 let game = new Game();
+game.startSplit = true;
 
