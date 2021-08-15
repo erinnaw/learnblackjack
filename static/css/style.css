@@ -12,27 +12,10 @@
 
 .load-item {
   margin: auto;
-  height: 200px;
+  height: 50px;
   width: 600px;
-  line-height: 200px;
-  text-align: center;
-}
-
-.grid-main-menu {
-  display: grid;
-  grid-template-rows: auto auto auto auto;
-  margin: auto;
-  margin-top: 50px;
-  height: 200px;
-  width: 200px;
-  text-align: center;
-  border: 3px solid black;
-  border-radius: 20px;
-}
-
-.main-menu-item {
-  position: relative;
   line-height: 50px;
+  text-align: center;
 }
 
 /* blackjack.html */
@@ -89,8 +72,9 @@
   padding-left: 20px;
 }
 
-.helper-subheader {
-  position: relative;
+.helper-subheader-col {
+  display: grid;
+  grid-template-columns: 65% 35%;
   background-color: blanchedalmond;
   width: 100%;
   height: 50px;
@@ -99,7 +83,10 @@
   padding-left: 20px;
 }
 
-.helper-item {
+.tool-tip {
+  width: 25px;
+  height: 25px;
+  margin: auto;
 }
 
 .highlight {
@@ -146,6 +133,28 @@
 #recommended-move {
   text-align: center;
   height: 50px;
+}
+
+.helper-text-container {
+  position: absolute;
+  visibility: hidden;
+  z-index: 15;
+  display: grid;
+  grid-template-rows: 20% 80%;
+  width: 600px;
+  height: 150px;
+  border: 3px solid black;
+  border-radius: 20px;
+  background-color: rgb(250, 250, 250, 0.8);
+  top: 14%;
+  left: 51%;
+  transform: translate(-50%, -50%);
+  padding: 5px;
+}
+
+.tool-tip-2 {
+  width: 25px;
+  height: 25px;
 }
 
 /* game */
@@ -200,6 +209,7 @@
 
 .next-round-text {
   position: absolute;
+  cursor: pointer;
   font-size: 25px;
   letter-spacing: 2px;
   width: 300px;
@@ -267,6 +277,7 @@
 
 .bet-amount {
   position: absolute;
+  cursor: pointer;
   top: 40%;
   right: 27%;
   font-size: 50px;
@@ -277,10 +288,6 @@
   line-height: 50px;
   background-color: gold;
   text-align: center;
-}
-
-.bet-amount:hover {
-  cursor: pointer;
 }
 
 .arrow-left {
@@ -456,6 +463,7 @@
 
 .player-menu-button {
   position: relative;
+  cursor: pointer;
   border: 2px solid black;
   border-radius: 10px;
   width: 200px;
@@ -491,4 +499,5 @@
 }
 
 .menu-item {
+  cursor: pointer;
 }

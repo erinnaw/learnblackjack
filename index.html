@@ -8,11 +8,17 @@
 
     <!--Load Dependecies-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js" crossorigin></script>
-    <script src="http://code.jquery.com/jquery.js"></script>
-    <link rel="stylesheet" href="static/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="./static/css/style.css"/>
 </head>
 
 <body class="main-container">
+    <div class="main-menu-header">Learn BlackJack</div>
+    <div class="load-item">
+        <span>
+            Learn how to play BlackJack with statistics and practice counting cards!
+        </span>
+    </div>
     <div class="grid-scoreboard-container" id="scoreboard">
         <span class="helper-item">Score ($):</span><span class="helper-item" id="score"></span>
         <div></div>
@@ -22,7 +28,10 @@
 
     <div class="grid-blackjack-container-col">
         <div class="grid-helper-container" id="helper">
-            <span class="helper-subheader">Probabilities</span>
+            <div class="helper-subheader-col">
+                <span class="helper-subheader">Probabilities</span>
+                <img src="static/image/help.png" class="tool-tip" id="probabilities-help"></img>
+            </div>
             <div class="grid-helper-container-col">
                 <span class="helper-item">Total Cards Left:</span>
                 <span class="helper-item" id="total-cards"></span>
@@ -59,7 +68,10 @@
                 <span class="helper-item">A:</span><span class="helper-item" id="card-A"></span><span
                     class="helper-item" id="card-left-A"></span>
             </div>
-            <span class="helper-subheader">EV</span>
+            <div class="helper-subheader-col">
+                <span class="helper-subheader">EV</span>
+                <img src="static/image/help.png" class="tool-tip" id="EV-help"></img>
+            </div>
             <div class="grid-helper-container-col">
                 <span class="helper-item" id="helper-2">2: +1</span>
                 <div></div>
@@ -84,8 +96,10 @@
                 <div></div>
                 <span class="helper-item">EV score:</span><span class="helper-item" id="EV-score"></span>
             </div>
-
-            <span class="helper-subheader">Recommended Move</span>
+            <div class="helper-subheader-col">
+                <span class="helper-subheader">Recommended Moves</span>
+                <img src="static/image/help.png" class="tool-tip" id="recommended-help"></img>
+            </div>
             <span class="helper-item" id="recommended-move"></span>
         </div>
 
@@ -123,6 +137,11 @@
                     <div class="player-menu-button" id="split">Split</div>
                 </div>
             </div>
+
+            <div class="helper-text-container" id="helper-text-container">
+                <img src="static/image/help.png" class="tool-tip-2"></img>
+                <div class="helper-text" id="helper-text"></div>
+            </div>
         </div>
     </div>
 
@@ -131,10 +150,11 @@
         <div></div>
         <span class="menu-item" id="simulate-game">Simulate Game</span>
         <div></div>
-        <span class="menu-item" id="back-to-main-menu">Back to Main Menu</span>
+        <span class="menu-item" id="credits">Credit(s)</span>
     </div>
 
-    <script src="static/js/blackjack.js"></script>
+    <script src="./static/js/blackjack.js"></script>
+    <script src="./static/js/helper-tips.js"></script>
 </body>
 
 </html>

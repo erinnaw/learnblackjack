@@ -477,6 +477,11 @@ class Game {
         $('#game-text').html("");
         $('#endround-screen').css("visibility", "hidden");
 
+        for (let i = 0; i < this.deck.cards.size; i++) {
+            $(`#card-${this.deck.cards.get(i).get_name()}`).removeClass("highlight");
+            $(`#card-left-${this.deck.cards.get(i).get_name()}`).removeClass("highlight");
+        }
+
         this.activate_bet_UI();
     }
 
@@ -493,6 +498,8 @@ class Game {
         $('#bet-amount').on('click');
         $('#bet-amount').css("visibility", "visible");
         $('#bet-amount').on('mouseover');
+
+        this.update_recommendation();
 
         if (this.bet > 100) {
             this.bet = 100;
@@ -941,6 +948,11 @@ class Game {
         $('#score').css('color', 'black');
         $('#bet').css('color', 'black');
         $('#bet-split').css('color', 'black');
+
+        for (let i = 0; i < this.deck.cards.size; i++) {
+            $(`#card-${this.deck.cards.get(i).get_name()}`).removeClass("highlight");
+            $(`#card-left-${this.deck.cards.get(i).get_name()}`).removeClass("highlight");
+        }
     }
 
     dealer_hit() {
@@ -1212,9 +1224,14 @@ class Game {
         $('#bet').css('color', 'black');
         $('#bet-split').css('color', 'black');
 
+        for (let i = 0; i < this.deck.cards.size; i++) {
+            $(`#card-${this.deck.cards.get(i).get_name()}`).removeClass("highlight");
+            $(`#card-left-${this.deck.cards.get(i).get_name()}`).removeClass("highlight");
+        }
+
         this.update_scoreboard();
         this.activate_bet_UI();
-        this.startSplit = true;
+        this.startSplit = false;
     }
 
     //check if hand can hit, stand, dd and/or split
@@ -1413,6 +1430,11 @@ class Game {
         this.dealer.empty_hand();
         this.player.empty_hand();
 
+        for (let i = 0; i < this.deck.cards.size; i++) {
+            $(`#card-${this.deck.cards.get(i).get_name()}`).removeClass("highlight");
+            $(`#card-left-${this.deck.cards.get(i).get_name()}`).removeClass("highlight");
+        }
+
         this.dealer.add_card_shown(this.deck.pop());
         this.player.add_card_shown(this.deck.pop());
         this.update_probabilities_flipped_cards(this.dealer.card_shown);
@@ -1450,7 +1472,7 @@ class Game {
 $('#new-game').on('click', () => {
     delete game;
     let game = new Game();
-    game.startSplit = true;
+    game.startSplit = false;
 
     $('#dealer-cards').html("");
     $('#player-cards').html("");
@@ -1460,10 +1482,6 @@ $('#new-game').on('click', () => {
     $('#c4').css("visibility", "hidden");
 });
 
-$('#back-to-main-menu').on('click', () => {
-    window.location.href = 'main.html';
-});
-
 let game = new Game();
-game.startSplit = true;
+game.startSplit = false;
 
