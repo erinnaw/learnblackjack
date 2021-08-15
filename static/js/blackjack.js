@@ -435,6 +435,7 @@ class Game {
         this.bet_increment = 10;
         this.max_bet = 100;
         this.startSplit = false;
+        this.atBetUI = true;
 
         this.probabilities = new Map();
         this.probabilities.set(0, this.deck.cards.get(0).get_qty() / this.deck.stack.length * 100);
@@ -452,6 +453,8 @@ class Game {
         this.probabilities.set(12, this.deck.cards.get(12).get_qty() / this.deck.stack.length * 100);
 
         this.recommendation = "None";
+        this.recommended_bet = "None";
+        this.recommended_move = "None";
 
         this.print_probabilities();
         $('#EV-score').html(this.ev_value);
@@ -499,6 +502,7 @@ class Game {
         $('#bet-amount').css("visibility", "visible");
         $('#bet-amount').on('mouseover');
 
+        this.atBetUI = true;
         this.update_recommendation();
 
         if (this.bet > 100) {
@@ -644,275 +648,311 @@ class Game {
         //if ev <= -4, lower bet, means higher chance of low valued cards = bad chances
         //if ev >= 4, raise bet, means higher chance of high calued cards = good chances
 
-        let output = "-";
-        let result = "-";
+        let output = "None";
+        let result = "None";
 
         if (this.ev_value <= -4) {
             output = "Raise Bet<br>";
+            this.recommended_bet = "Raise Bet";
         }
 
         else if (this.ev_value >= 4) {
             output = "Lower Bet<br>";
+            this.recommended_bet = "Lower Bet";
         }
 
         else {
             output = "Neutral Bet<br>";
+            this.recommended_bet = "Neutral Bet";
         }
-
-        if (this.dealer.card_shown === 0) {
-            if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 4)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 4))) {
-                result = "Hit";
-            }
-            else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 5 && this.player.cards[0] <= 8)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 5 && this.player.card_shown <= 8))) {
-                result = "Stand";
-            }
-            else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
-                (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
-                (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
-                result = "Split";
-            }
-            else if (this.player.card_shown === 2 && this.player.cards[0] === 2) {
-                result = "Hit";
-            }
-            else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
-                result = "Double Down";
-            }
-            else if ((this.player.card_shown >= 4 && this.player.card_shown <= 7) &&
-                (this.player.cards[0] >= 4 && this.player.cards[0] <= 7) &&
-                this.player.card_shown === this.player.cards[0]) {
-                result = "Split";
-            }
-            else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
-                (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
-                result = "Stand";
-            }
+        
+        if (this.atBetUI) {
+            this.atBetUI = false;
         }
-        else if (this.dealer.card_shown === 1) {
-            if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 3)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 3))) {
-                result = "Hit";
+        else {
+            if (this.dealer.card_shown === 0) {
+                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 4)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 4))) {
+                    result = "Hit";
+                }
+                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 5 && this.player.cards[0] <= 8)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 5 && this.player.card_shown <= 8))) {
+                    result = "Stand";
+                }
+                else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
+                    (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
+                    (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
+                    result = "Split";
+                }
+                else if (this.player.card_shown === 2 && this.player.cards[0] === 2) {
+                    result = "Hit";
+                }
+                else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
+                    result = "Double Down";
+                }
+                else if ((this.player.card_shown >= 4 && this.player.card_shown <= 7) &&
+                    (this.player.cards[0] >= 4 && this.player.cards[0] <= 7) &&
+                    this.player.card_shown === this.player.cards[0]) {
+                    result = "Split";
+                }
+                else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
+                    (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
+                    result = "Stand";
+                }
+                else {
+                    result = "None";
+                }
             }
-            else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 4 && this.player.cards[0] <= 5)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 4 && this.player.card_shown <= 5))) {
-                result = "Double Down";
+            else if (this.dealer.card_shown === 1) {
+                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 3)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 3))) {
+                    result = "Hit";
+                }
+                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 4 && this.player.cards[0] <= 5)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 4 && this.player.card_shown <= 5))) {
+                    result = "Double Down";
+                }
+                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
+                    result = "Stand";
+                }
+                else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
+                    (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
+                    (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
+                    result = "Split";
+                }
+                else if (this.player.card_shown === 2 && this.player.cards[0] === 2) {
+                    result = "Hit";
+                }
+                else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
+                    result = "Double Down";
+                }
+                else if ((this.player.card_shown >= 4 && this.player.card_shown <= 7) &&
+                    (this.player.cards[0] >= 4 && this.player.cards[0] <= 7) &&
+                    this.player.card_shown === this.player.cards[0]) {
+                    result = "Split";
+                }
+                else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
+                    (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
+                    result = "Stand";
+                }
+                else {
+                    result = "None";
+                }
             }
-            else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
-                result = "Stand";
+            else if (this.dealer.card_shown === 2) {
+                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 1)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 1))) {
+                    result = "Hit";
+                }
+                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 2 && this.player.cards[0] <= 5)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 2 && this.player.card_shown <= 5))) {
+                    result = "Double Down";
+                }
+                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
+                    result = "Stand";
+                }
+                else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
+                    (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
+                    (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
+                    result = "Split";
+                }
+                else if (this.player.card_shown === 2 && this.player.cards[0] === 2) {
+                    result = "Hit";
+                }
+                else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
+                    result = "Double Down";
+                }
+                else if ((this.player.card_shown >= 4 && this.player.card_shown <= 7) &&
+                    (this.player.cards[0] >= 4 && this.player.cards[0] <= 7) &&
+                    this.player.card_shown === this.player.cards[0]) {
+                    result = "Split";
+                }
+                else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
+                    (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
+                    result = "Stand";
+                }
+                else {
+                    result = "None";
+                }
             }
-            else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
-                (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
-                (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
-                result = "Split";
+            else if (this.dealer.card_shown === 3 || this.dealer.card_shown === 4) {
+                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 5)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 5))) {
+                    result = "Double Down";
+                }
+                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
+                    result = "Stand";
+                }
+                else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
+                    (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
+                    (this.player.card_shown === 1 && this.player.cards[0] === 1) ||
+                    (this.player.card_shown === 2 && this.player.cards[0] === 2)) {
+                    result = "Split";
+                }
+                else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
+                    result = "Double Down";
+                }
+                else if ((this.player.card_shown >= 4 && this.player.card_shown <= 7) &&
+                    (this.player.cards[0] >= 4 && this.player.cards[0] <= 7) &&
+                    this.player.card_shown === this.player.cards[0]) {
+                    result = "Split";
+                }
+                else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
+                    (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
+                    result = "Stand";
+                }
+                else {
+                    result = "None";
+                }
             }
-            else if (this.player.card_shown === 2 && this.player.cards[0] === 2) {
-                result = "Hit";
+            else if (this.dealer.card_shown === 5) {
+                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 4)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 4))) {
+                    result = "Hit";
+                }
+                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 5 && this.player.cards[0] <= 8)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 5 && this.player.card_shown <= 8))) {
+                    result = "Stand";
+                }
+                else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
+                    (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
+                    (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
+                    result = "Split";
+                }
+                else if (this.player.card_shown === 2 && this.player.cards[0] === 2) {
+                    result = "Hit";
+                }
+                else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
+                    result = "Double Down";
+                }
+                else if (this.player.card_shown === 4 && this.player.cards[0] === 4) {
+                    result = "Hit";
+                }
+                else if ((this.player.card_shown >= 5 && this.player.card_shown <= 6) &&
+                    (this.player.cards[0] >= 5 && this.player.cards[0] <= 6) &&
+                    this.player.card_shown === this.player.cards[0]) {
+                    result = "Split";
+                }
+                else if ((this.player.card_shown >= 7 && this.player.card_shown <= 11) &&
+                    (this.player.cards[0] >= 7 && this.player.cards[0] <= 11)) {
+                    result = "Stand";
+                }
+                else {
+                    result = "None";
+                }
             }
-            else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
-                result = "Double Down";
+            else if (this.dealer.card_shown === 6) {
+                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 4)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 4))) {
+                    result = "Hit";
+                }
+                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 5 && this.player.cards[0] <= 8)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 5 && this.player.card_shown <= 8))) {
+                    result = "Stand";
+                }
+                else if (this.player.card_shown === 12 && this.player.cards[0] === 12) {
+                    result = "Split";
+                }
+                else if ((this.player.card_shown === 0 && this.player.cards[0] === 0) ||
+                    (this.player.card_shown === 1 && this.player.cards[0] === 1) ||
+                    (this.player.card_shown === 2 && this.player.cards[0] === 2)) {
+                    result = "Hit";
+                }
+                else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
+                    result = "Double Down";
+                }
+                else if ((this.player.card_shown === 4 && this.player.cards[0] === 4) ||
+                    (this.player.card_shown === 5 && this.player.cards[0] === 5)) {
+                    result = "Hit";
+                }
+                else if ((this.player.card_shown >= 6 && this.player.card_shown <= 7) &&
+                    (this.player.cards[0] >= 6 && this.player.cards[0] <= 7) &&
+                    this.player.card_shown === this.player.cards[0]) {
+                    result = "Split";
+                }
+                else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
+                    (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
+                    result = "Stand";
+                }
+                else {
+                    result = "None";
+                }
             }
-            else if ((this.player.card_shown >= 4 && this.player.card_shown <= 7) &&
-                (this.player.cards[0] >= 4 && this.player.cards[0] <= 7) &&
-                this.player.card_shown === this.player.cards[0]) {
-                result = "Split";
+            else if (this.dealer.card_shown === 7) {
+                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 5)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 5))) {
+                    result = "Hit";
+                }
+                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
+                    result = "Stand";
+                }
+                else if (this.player.card_shown === 12 && this.player.cards[0] === 12) {
+                    result = "Split";
+                }
+                else if ((this.player.card_shown === 0 && this.player.cards[0] === 0) ||
+                    (this.player.card_shown === 1 && this.player.cards[0] === 1) ||
+                    (this.player.card_shown === 2 && this.player.cards[0] === 2)) {
+                    result = "Hit";
+                }
+                else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
+                    result = "Double Down";
+                }
+                else if ((this.player.card_shown === 4 && this.player.cards[0] === 4) ||
+                    (this.player.card_shown === 5 && this.player.cards[0] === 5)) {
+                    result = "Hit";
+                }
+                else if ((this.player.card_shown >= 6 && this.player.card_shown <= 7) &&
+                    (this.player.cards[0] >= 6 && this.player.cards[0] <= 7) &&
+                    this.player.card_shown === this.player.cards[0]) {
+                    result = "Split";
+                }
+                else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
+                    (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
+                    result = "Stand";
+                }
+                else {
+                    result = "None";
+                }
             }
-            else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
-                (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
-                result = "Stand";
+            else if (this.dealer.card_shown >= 8 && this.dealer.card_shown <= 12) {
+                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 5)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 5))) {
+                    result = "Hit";
+                }
+                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
+                    (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
+                    result = "Stand";
+                }
+                else if (this.player.card_shown === 12 && this.player.cards[0] === 12) {
+                    result = "Split";
+                }
+                else if ((this.player.card_shown >= 0 && this.player.card_shown <= 5) &&
+                    (this.player.cards[0] >= 0 && this.player.cards[0] <= 5) &&
+                    this.player.card_shown === this.player.cards[0]) {
+                    result = "Hit";
+                }
+                else if (this.player.card_shown === 6 && this.player.cards[0] === 6) {
+                    result = "Split";
+                }
+                else if ((this.player.card_shown >= 7 && this.player.card_shown <= 11) &&
+                    (this.player.cards[0] >= 7 && this.player.cards[0] <= 11)) {
+                    result = "Stand";
+                }
+                else {
+                    result = "None";
+                }
             }
-        }
-        else if (this.dealer.card_shown === 2) {
-            if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 1)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 1))) {
-                result = "Hit";
-            }
-            else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 2 && this.player.cards[0] <= 5)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 2 && this.player.card_shown <= 5))) {
-                result = "Double Down";
-            }
-            else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
-                result = "Stand";
-            }
-            else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
-                (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
-                (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
-                result = "Split";
-            }
-            else if (this.player.card_shown === 2 && this.player.cards[0] === 2) {
-                result = "Hit";
-            }
-            else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
-                result = "Double Down";
-            }
-            else if ((this.player.card_shown >= 4 && this.player.card_shown <= 7) &&
-                (this.player.cards[0] >= 4 && this.player.cards[0] <= 7) &&
-                this.player.card_shown === this.player.cards[0]) {
-                result = "Split";
-            }
-            else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
-                (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
-                result = "Stand";
-            }
-        }
-        else if (this.dealer.card_shown === 3 || this.dealer.card_shown === 4) {
-            if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 5)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 5))) {
-                result = "Double Down";
-            }
-            else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
-                result = "Stand";
-            }
-            else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
-                (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
-                (this.player.card_shown === 1 && this.player.cards[0] === 1) ||
-                (this.player.card_shown === 2 && this.player.cards[0] === 2)) {
-                result = "Split";
-            }
-            else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
-                result = "Double Down";
-            }
-            else if ((this.player.card_shown >= 4 && this.player.card_shown <= 7) &&
-                (this.player.cards[0] >= 4 && this.player.cards[0] <= 7) &&
-                this.player.card_shown === this.player.cards[0]) {
-                result = "Split";
-            }
-            else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
-                (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
-                result = "Stand";
-            }
-        }
-        else if (this.dealer.card_shown === 5) {
-            if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 4)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 4))) {
-                result = "Hit";
-            }
-            else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 5 && this.player.cards[0] <= 8)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 5 && this.player.card_shown <= 8))) {
-                result = "Stand";
-            }
-            else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
-                (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
-                (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
-                result = "Split";
-            }
-            else if (this.player.card_shown === 2 && this.player.cards[0] === 2) {
-                result = "Hit";
-            }
-            else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
-                result = "Double Down";
-            }
-            else if (this.player.card_shown === 4 && this.player.cards[0] === 4) {
-                result = "Hit";
-            }
-            else if ((this.player.card_shown >= 5 && this.player.card_shown <= 6) &&
-                (this.player.cards[0] >= 5 && this.player.cards[0] <= 6) &&
-                this.player.card_shown === this.player.cards[0]) {
-                result = "Split";
-            }
-            else if ((this.player.card_shown >= 7 && this.player.card_shown <= 11) &&
-                (this.player.cards[0] >= 7 && this.player.cards[0] <= 11)) {
-                result = "Stand";
-            }
-        }
-        else if (this.dealer.card_shown === 6) {
-            if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 4)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 4))) {
-                result = "Hit";
-            }
-            else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 5 && this.player.cards[0] <= 8)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 5 && this.player.card_shown <= 8))) {
-                result = "Stand";
-            }
-            else if (this.player.card_shown === 12 && this.player.cards[0] === 12) {
-                result = "Split";
-            }
-            else if ((this.player.card_shown === 0 && this.player.cards[0] === 0) ||
-                (this.player.card_shown === 1 && this.player.cards[0] === 1) ||
-                (this.player.card_shown === 2 && this.player.cards[0] === 2)) {
-                result = "Hit";
-            }
-            else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
-                result = "Double Down";
-            }
-            else if ((this.player.card_shown === 4 && this.player.cards[0] === 4) ||
-                (this.player.card_shown === 5 && this.player.cards[0] === 5)) {
-                result = "Hit";
-            }
-            else if ((this.player.card_shown >= 6 && this.player.card_shown <= 7) &&
-                (this.player.cards[0] >= 6 && this.player.cards[0] <= 7) &&
-                this.player.card_shown === this.player.cards[0]) {
-                result = "Split";
-            }
-            else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
-                (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
-                result = "Stand";
-            }
-        }
-        else if (this.dealer.card_shown === 7) {
-            if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 5)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 5))) {
-                result = "Hit";
-            }
-            else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
-                result = "Stand";
-            }
-            else if (this.player.card_shown === 12 && this.player.cards[0] === 12) {
-                result = "Split";
-            }
-            else if ((this.player.card_shown === 0 && this.player.cards[0] === 0) ||
-                (this.player.card_shown === 1 && this.player.cards[0] === 1) ||
-                (this.player.card_shown === 2 && this.player.cards[0] === 2)) {
-                result = "Hit";
-            }
-            else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
-                result = "Double Down";
-            }
-            else if ((this.player.card_shown === 4 && this.player.cards[0] === 4) ||
-                (this.player.card_shown === 5 && this.player.cards[0] === 5)) {
-                result = "Hit";
-            }
-            else if ((this.player.card_shown >= 6 && this.player.card_shown <= 7) &&
-                (this.player.cards[0] >= 6 && this.player.cards[0] <= 7) &&
-                this.player.card_shown === this.player.cards[0]) {
-                result = "Split";
-            }
-            else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
-                (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
-                result = "Stand";
-            }
-        }
-        else if (this.dealer.card_shown >= 8 && this.dealer.card_shown <= 12) {
-            if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 5)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 5))) {
-                result = "Hit";
-            }
-            else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
-                (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
-                result = "Stand";
-            }
-            else if (this.player.card_shown === 12 && this.player.cards[0] === 12) {
-                result = "Split";
-            }
-            else if ((this.player.card_shown >= 0 && this.player.card_shown <= 5) &&
-                (this.player.cards[0] >= 0 && this.player.cards[0] <= 5) &&
-                this.player.card_shown === this.player.cards[0]) {
-                result = "Hit";
-            }
-            else if (this.player.card_shown === 6 && this.player.cards[0] === 6) {
-                result = "Split";
-            }
-            else if ((this.player.card_shown >= 7 && this.player.card_shown <= 11) &&
-                (this.player.cards[0] >= 7 && this.player.cards[0] <= 11)) {
-                result = "Stand";
+            else {
+                result = "None";
             }
         }
 
         this.recommendation = output + result;
+        this.recommended_move = result;
         $('#recommended-move').html(this.recommendation);
     }
 
@@ -925,6 +965,8 @@ class Game {
         this.ev_value = 0;
         this.qty = 4 * 13;
         this.recommendation = "None";
+        this.recommended_bet = "None";
+        this.recommended_move = "None";
 
         this.set_probabilities_all_cards();
         this.print_probabilities();
@@ -1220,7 +1262,6 @@ class Game {
         $('#doubledown').addClass("inactive");
         $('#split').addClass("inactive");
 
-        $('#score').css('color', 'black');
         $('#bet').css('color', 'black');
         $('#bet-split').css('color', 'black');
 
@@ -1455,7 +1496,6 @@ class Game {
         $('#c1').css("visibility", "visible");
         $('#c2').css("visibility", "visible");
 
-        $('#score').css('color', 'black');
         $('#bet').css('color', 'black');
         $('#bet-split').css('color', 'black');
 

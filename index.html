@@ -3,6 +3,11 @@
 
 <head>
     <title>Learn BlackJack</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="Learn how to play BlackJack with statistics and practice counting cards!">
+    <meta name="keywords" content="blackjack, learn blackjack, count cards">
+    <meta name="author" content="Erinna Widjaja">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!--Bootstrap CSS-->
 
@@ -94,7 +99,7 @@
                 <span class="helper-item" id="helper-A">A: -1</span>
                 <div></div>
                 <div></div>
-                <span class="helper-item">EV score:</span><span class="helper-item" id="EV-score"></span>
+                <span class="helper-item">EV value:</span><span class="helper-item" id="EV-score"></span>
             </div>
             <div class="helper-subheader-col">
                 <span class="helper-subheader">Recommended Moves</span>
@@ -139,7 +144,10 @@
             </div>
 
             <div class="helper-text-container" id="helper-text-container">
-                <img src="static/image/help.png" class="tool-tip-2"></img>
+                <div class="helper-text-container-col">
+                    <img src="static/image/help.png" class="tool-tip-2"></img>
+                    <span class="helper-tip-subheader" id="helper-tip-subheader"></span>
+                </div>
                 <div class="helper-text" id="helper-text"></div>
             </div>
         </div>
@@ -148,9 +156,9 @@
     <div class="grid-menu-container" id="menu">
         <span class="menu-item" id="new-game">New Game</span>
         <div></div>
-        <span class="menu-item" id="simulate-game">Simulate Game</span>
+        <span class="menu-item" id="how-to-play">How to Play</span>
         <div></div>
-        <span class="menu-item" id="credits">Credit(s)</span>
+        <a href="https://www.erinnawidjaja.com"><span class="menu-item" id="my-website">My Website</span></a>
     </div>
 
     <script src="./static/js/blackjack.js"></script>
