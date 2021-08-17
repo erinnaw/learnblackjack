@@ -1,5 +1,15 @@
 "use-strict";
 
+$('#how-to-play').on('click', () => {
+    $('#how-to-play-container').removeClass('hidden');
+    $('#how-to-play-container').addClass('visible');
+});
+
+$('#close-button').on('click', () => {
+    $('#how-to-play-container').removeClass('visible');
+    $('#how-to-play-container').addClass('hidden');
+});
+
 $('#probabilities-help').on('mouseover', () => {
     //$('#helper-text-container').css('visibility', 'visible');
     $('#helper-text-container').addClass('visible');
@@ -48,43 +58,23 @@ $('#recommended-help').on('mouseover', () => {
     $('#helper-text').html(`<p>
                             The Recommended Moves are calculated based on the current EV value and the dealer's face-up card.
                             </p>`);
-
+    $('#helper-text').append(`<ul></ul>`);
     if (game.recommended_bet === "Raise Bet") {
-        $('#helper-text').append(`<ul>
-                                    <li><b>Raise Bet</b>: You have a good chance of drawing high-valued cards (10 & A) 
-                                    based on the current EV value. The odd is in your favor.</li>`);
+        $('ul').append(`<li><b>Raise Bet</b>: You have a good chance of drawing high-valued cards (10 & A) 
+                        based on the current EV value. The odd is in your favor.</li>`);
     }
     else if(game.recommended_bet === "Lower Bet") {
-        $('#helper-text').append(`<ul>
-                                    <li><b>Lower Bet</b>: You have a good chance of drawing low-valued cards (1 ~ 6) 
-                                    based on the current EV value. This is a risky bet.</li>`);
+        $('ul').append(`<li><b>Lower Bet</b>: You have a good chance of drawing low-valued cards (1 ~ 6) 
+                        based on the current EV value. This is a risky bet.</li>`);
     }
     else if (game.recommended_bet === "Neutral Bet") {
-        $('#helper-text').append(`<ul>
-                                    <li><b>Neutral Bet</b>: No recommendation based on the neutral EV value.</li>`);
+        $('ul').append(`<li><b>Neutral Bet</b>: No recommendation based on the current relatively neutral EV value.</li>`);
     }
     else {
-        $('#helper-text').append(`<ul>
-                                    <li><b>None</b>: No recommendation.</li>`);
+        $('ul').append(`<li><b>None</b>: No recommendation.</li>`);
     }
     
-    if (game.recommended_move === "Hit") {
-        $('#helper-text').append(`<li><b>Hit</b>: - </li>`);
-    }
-    else if (game.recommended_move === "Stand") {
-        $('#helper-text').append(`<li><b>Stand</b>: - </li>`);
-    }
-    else if (game.recommended_move === "Double Down") {
-        $('#helper-text').append(`<li><b>Double Down</b>: - </li>`);
-    }
-    else if (game.recommended_move === "Split") {
-        $('#helper-text').append(`<li><b>Split</b>: - </li>`);
-    }
-    else {
-        $('#helper-text').append(`<li><b>None</b>: No recommendation.</li>`);
-    }
-
-    $('#helper-text').append('</ul>');
+    $('ul').append(`<li><b>${game.recommended_move}</b>: ${game.recommended_text} </li>`);
 
 }).on('mouseout', () => {
     //$('#helper-text-container').css('visibility', 'hidden');

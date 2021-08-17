@@ -455,6 +455,7 @@ class Game {
         this.recommendation = "None";
         this.recommended_bet = "None";
         this.recommended_move = "None";
+        this.recommended_text = "-";
 
         this.print_probabilities();
         $('#EV-score').html(this.ev_value);
@@ -650,6 +651,9 @@ class Game {
 
         let output = "None";
         let result = "None";
+        this.recommended_move = "None";
+        this.recommended_text = "-";
+        const player_hand = this.player.calculate_hand_best();
 
         if (this.ev_value <= -4) {
             output = "Raise Bet<br>";
@@ -670,284 +674,390 @@ class Game {
             this.atBetUI = false;
         }
         else {
-            if (this.dealer.card_shown === 0) {
-                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 4)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 4))) {
-                    result = "Hit";
+            if (this.player.cards.length > 1) {
+                if (player_hand < 15) {
+                    if (this.ev_value > 3) {
+                        result = "Stand";
+                        this.recommended_text = "Based on the current EV value, you are likely to draw a high-valued card [10 ~ 11].";
+                    }
+                    else  if (this.ev_value < -3) {
+                        result = "Hit";
+                        this.recommended_text = "Based on the current EV value, you are likely to draw a low-valued card [1 ~ 6].";
+                    }
+                    else {
+                        result = "Hit";
+                        this.recommended_text = `Based on the current relatively neutral EV value, it is hard to tell what your next move should be.
+                                                But your hand is too low anyway. Take a card!`;   
+                    }
                 }
-                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 5 && this.player.cards[0] <= 8)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 5 && this.player.card_shown <= 8))) {
-                    result = "Stand";
-                }
-                else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
-                    (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
-                    (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
-                    result = "Split";
-                }
-                else if (this.player.card_shown === 2 && this.player.cards[0] === 2) {
-                    result = "Hit";
-                }
-                else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
-                    result = "Double Down";
-                }
-                else if ((this.player.card_shown >= 4 && this.player.card_shown <= 7) &&
-                    (this.player.cards[0] >= 4 && this.player.cards[0] <= 7) &&
-                    this.player.card_shown === this.player.cards[0]) {
-                    result = "Split";
-                }
-                else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
-                    (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
-                    result = "Stand";
-                }
-                else {
-                    result = "None";
-                }
-            }
-            else if (this.dealer.card_shown === 1) {
-                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 3)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 3))) {
-                    result = "Hit";
-                }
-                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 4 && this.player.cards[0] <= 5)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 4 && this.player.card_shown <= 5))) {
-                    result = "Double Down";
-                }
-                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
-                    result = "Stand";
-                }
-                else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
-                    (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
-                    (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
-                    result = "Split";
-                }
-                else if (this.player.card_shown === 2 && this.player.cards[0] === 2) {
-                    result = "Hit";
-                }
-                else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
-                    result = "Double Down";
-                }
-                else if ((this.player.card_shown >= 4 && this.player.card_shown <= 7) &&
-                    (this.player.cards[0] >= 4 && this.player.cards[0] <= 7) &&
-                    this.player.card_shown === this.player.cards[0]) {
-                    result = "Split";
-                }
-                else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
-                    (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
-                    result = "Stand";
+                else if (player_hand < 17){
+                    if (this.ev_value > 3) {
+                        result = "Hit";
+                        this.recommended_text = "Based on the current EV value, you are likely to draw a high-valued card [10 ~ 11].";
+                    }
+                    else  if (this.ev_value < -3) {
+                        result = "Stand";
+                        this.recommended_text = "Based on the current EV value, you are likely to draw a low-valued card [1 ~ 6].";
+                    }
+                    else {
+                        result = "Stand";
+                        this.recommended_text = `Based on the current relatively neutral EV value, it is hard to tell what your next move should be.
+                                                But your hand is too high anyway. Stand!`;   
+                    }
                 }
                 else {
-                    result = "None";
-                }
-            }
-            else if (this.dealer.card_shown === 2) {
-                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 1)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 1))) {
-                    result = "Hit";
-                }
-                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 2 && this.player.cards[0] <= 5)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 2 && this.player.card_shown <= 5))) {
-                    result = "Double Down";
-                }
-                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
                     result = "Stand";
-                }
-                else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
-                    (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
-                    (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
-                    result = "Split";
-                }
-                else if (this.player.card_shown === 2 && this.player.cards[0] === 2) {
-                    result = "Hit";
-                }
-                else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
-                    result = "Double Down";
-                }
-                else if ((this.player.card_shown >= 4 && this.player.card_shown <= 7) &&
-                    (this.player.cards[0] >= 4 && this.player.cards[0] <= 7) &&
-                    this.player.card_shown === this.player.cards[0]) {
-                    result = "Split";
-                }
-                else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
-                    (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
-                    result = "Stand";
-                }
-                else {
-                    result = "None";
-                }
-            }
-            else if (this.dealer.card_shown === 3 || this.dealer.card_shown === 4) {
-                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 5)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 5))) {
-                    result = "Double Down";
-                }
-                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
-                    result = "Stand";
-                }
-                else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
-                    (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
-                    (this.player.card_shown === 1 && this.player.cards[0] === 1) ||
-                    (this.player.card_shown === 2 && this.player.cards[0] === 2)) {
-                    result = "Split";
-                }
-                else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
-                    result = "Double Down";
-                }
-                else if ((this.player.card_shown >= 4 && this.player.card_shown <= 7) &&
-                    (this.player.cards[0] >= 4 && this.player.cards[0] <= 7) &&
-                    this.player.card_shown === this.player.cards[0]) {
-                    result = "Split";
-                }
-                else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
-                    (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
-                    result = "Stand";
-                }
-                else {
-                    result = "None";
-                }
-            }
-            else if (this.dealer.card_shown === 5) {
-                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 4)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 4))) {
-                    result = "Hit";
-                }
-                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 5 && this.player.cards[0] <= 8)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 5 && this.player.card_shown <= 8))) {
-                    result = "Stand";
-                }
-                else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
-                    (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
-                    (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
-                    result = "Split";
-                }
-                else if (this.player.card_shown === 2 && this.player.cards[0] === 2) {
-                    result = "Hit";
-                }
-                else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
-                    result = "Double Down";
-                }
-                else if (this.player.card_shown === 4 && this.player.cards[0] === 4) {
-                    result = "Hit";
-                }
-                else if ((this.player.card_shown >= 5 && this.player.card_shown <= 6) &&
-                    (this.player.cards[0] >= 5 && this.player.cards[0] <= 6) &&
-                    this.player.card_shown === this.player.cards[0]) {
-                    result = "Split";
-                }
-                else if ((this.player.card_shown >= 7 && this.player.card_shown <= 11) &&
-                    (this.player.cards[0] >= 7 && this.player.cards[0] <= 11)) {
-                    result = "Stand";
-                }
-                else {
-                    result = "None";
-                }
-            }
-            else if (this.dealer.card_shown === 6) {
-                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 4)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 4))) {
-                    result = "Hit";
-                }
-                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 5 && this.player.cards[0] <= 8)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 5 && this.player.card_shown <= 8))) {
-                    result = "Stand";
-                }
-                else if (this.player.card_shown === 12 && this.player.cards[0] === 12) {
-                    result = "Split";
-                }
-                else if ((this.player.card_shown === 0 && this.player.cards[0] === 0) ||
-                    (this.player.card_shown === 1 && this.player.cards[0] === 1) ||
-                    (this.player.card_shown === 2 && this.player.cards[0] === 2)) {
-                    result = "Hit";
-                }
-                else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
-                    result = "Double Down";
-                }
-                else if ((this.player.card_shown === 4 && this.player.cards[0] === 4) ||
-                    (this.player.card_shown === 5 && this.player.cards[0] === 5)) {
-                    result = "Hit";
-                }
-                else if ((this.player.card_shown >= 6 && this.player.card_shown <= 7) &&
-                    (this.player.cards[0] >= 6 && this.player.cards[0] <= 7) &&
-                    this.player.card_shown === this.player.cards[0]) {
-                    result = "Split";
-                }
-                else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
-                    (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
-                    result = "Stand";
-                }
-                else {
-                    result = "None";
-                }
-            }
-            else if (this.dealer.card_shown === 7) {
-                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 5)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 5))) {
-                    result = "Hit";
-                }
-                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
-                    result = "Stand";
-                }
-                else if (this.player.card_shown === 12 && this.player.cards[0] === 12) {
-                    result = "Split";
-                }
-                else if ((this.player.card_shown === 0 && this.player.cards[0] === 0) ||
-                    (this.player.card_shown === 1 && this.player.cards[0] === 1) ||
-                    (this.player.card_shown === 2 && this.player.cards[0] === 2)) {
-                    result = "Hit";
-                }
-                else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
-                    result = "Double Down";
-                }
-                else if ((this.player.card_shown === 4 && this.player.cards[0] === 4) ||
-                    (this.player.card_shown === 5 && this.player.cards[0] === 5)) {
-                    result = "Hit";
-                }
-                else if ((this.player.card_shown >= 6 && this.player.card_shown <= 7) &&
-                    (this.player.cards[0] >= 6 && this.player.cards[0] <= 7) &&
-                    this.player.card_shown === this.player.cards[0]) {
-                    result = "Split";
-                }
-                else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
-                    (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
-                    result = "Stand";
-                }
-                else {
-                    result = "None";
-                }
-            }
-            else if (this.dealer.card_shown >= 8 && this.dealer.card_shown <= 12) {
-                if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 5)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 5))) {
-                    result = "Hit";
-                }
-                else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
-                    (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
-                    result = "Stand";
-                }
-                else if (this.player.card_shown === 12 && this.player.cards[0] === 12) {
-                    result = "Split";
-                }
-                else if ((this.player.card_shown >= 0 && this.player.card_shown <= 5) &&
-                    (this.player.cards[0] >= 0 && this.player.cards[0] <= 5) &&
-                    this.player.card_shown === this.player.cards[0]) {
-                    result = "Hit";
-                }
-                else if (this.player.card_shown === 6 && this.player.cards[0] === 6) {
-                    result = "Split";
-                }
-                else if ((this.player.card_shown >= 7 && this.player.card_shown <= 11) &&
-                    (this.player.cards[0] >= 7 && this.player.cards[0] <= 11)) {
-                    result = "Stand";
-                }
-                else {
-                    result = "None";
+                    this.recommended_text = "You have a good hand. Stand!";                    
                 }
             }
             else {
-                result = "None";
+                if (this.dealer.card_shown === 0) {
+                    if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 4)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 4))) {
+                        result = "Hit";
+                        this.recommended_text = "Treat the [A] card like a 1. Take another card because your dealer could very well bust from this!";
+                    }
+                    else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 5 && this.player.cards[0] <= 8)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 5 && this.player.card_shown <= 8))) {
+                        result = "Stand";
+                        this.recommended_text = "Treat the [A] card like an 11. You have a decent hand that is not worth the risk of another hit.";
+                    }
+                    else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
+                        (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
+                        (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
+                        result = "Split";
+                        this.recommended_text = "These are good cards to split";
+                    }
+                    else if((this.player.card_shown >= 0 && this.player.card_shown <= 6) &&
+                        (this.player.cards[0] >= 0 && this.player.cards[0] <= 6)) {
+                            result = 'Hit';
+                            this.recommended_text = "Your hand is too low. Take another card!";
+                    }
+                    else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
+                        result = "Double Down";
+                        this.recommended_text = "Go big or go home!";
+                    }
+                    else if (((this.player.card_shown >= 4 && this.player.card_shown <= 7) ||
+                        (this.player.cards[0] >= 4 && this.player.cards[0] <= 7)) &&
+                        (this.player.card_shown === this.player.cards[0])) {
+                        result = "Split";
+                        this.recommended_text = "You can split your cards";
+                    }
+                    else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
+                        (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
+                        result = "Stand";
+                        this.recommended_text = "You have a great hand. Stand!";
+                    }
+                    else {
+                        result = "None";
+                        this.recommended_text = "-";
+                    }
+                }
+                else if (this.dealer.card_shown === 1) {
+                    if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 3)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 3))) {
+                        result = "Hit";
+                        this.recommended_text = "Treat the [A] card like a 1. Take another card because your dealer could very well bust from this!";
+                    }
+                    else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 4 && this.player.cards[0] <= 5)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 4 && this.player.card_shown <= 5))) {
+                        result = "Double Down";
+                        this.recommended_text = "Treat the [A] card like a 1 and double down. The odds are in your favor!";
+                    }
+                    else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
+                        result = "Stand";
+                        this.recommended_text = "Treat the [A] card like an 11. You have a decent hand that is not worth the risk of another hit.";
+                    }
+                    else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
+                        (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
+                        (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
+                        result = "Split";
+                        this.recommended_text = "This is the perfect pair to split!";
+                    }
+                    else if((this.player.card_shown >= 0 && this.player.card_shown <= 6) &&
+                        (this.player.cards[0] >= 0 && this.player.cards[0] <= 6)) {
+                            result = 'Hit';
+                            this.recommended_text = "Your hand is too low. Take another card!";
+                    }
+                    else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
+                        result = "Double Down";
+                        this.recommended_text = "Go big or go home!";
+                    }
+                    else if (((this.player.card_shown >= 4 && this.player.card_shown <= 7) &&
+                        (this.player.cards[0] >= 4 && this.player.cards[0] <= 7)) &&
+                        this.player.card_shown === this.player.cards[0]) {
+                        result = "Split";
+                        this.recommended_text = "You have a good pair to split.";
+                    }
+                    else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
+                        (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
+                        result = "Stand";
+                        this.recommended_text = "You have a great hand. Stand!";
+                    }
+                    else {
+                        result = "None";
+                        this.recommended_text = "-";
+                    }
+                }
+                else if (this.dealer.card_shown === 2) {
+                    if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 1)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 1))) {
+                        result = "Hit";
+                        this.recommended_text = "Treat the [A] card like a 1. Take another card because your dealer could very well bust from this!";
+                    }
+                    else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 2 && this.player.cards[0] <= 5)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 2 && this.player.card_shown <= 5))) {
+                        result = "Double Down";
+                        this.recommended_text = "Treat the [A] card like a 1 and double down. The odds are in your favor!";
+                    }
+                    else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
+                        result = "Stand";
+                        this.recommended_text = "Treat the [A] card like an 11. You have a decent hand that is not worth the risk of another hit.";
+                    }
+                    else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
+                        (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
+                        (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
+                        result = "Split";
+                        this.recommended_text = "This is the perfect pair to split!";
+                    }
+                    else if((this.player.card_shown >= 0 && this.player.card_shown <= 6) &&
+                        (this.player.cards[0] >= 0 && this.player.cards[0] <= 6)) {
+                            result = 'Hit';
+                            this.recommended_text = "Your hand is too low. Take another card!";
+                    }
+                    else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
+                        result = "Double Down";
+                        this.recommended_text = "Go big or go home!";
+                    }
+                    else if (((this.player.card_shown >= 4 && this.player.card_shown <= 7) &&
+                        (this.player.cards[0] >= 4 && this.player.cards[0] <= 7)) &&
+                        this.player.card_shown === this.player.cards[0]) {
+                        result = "Split";
+                        this.recommended_text = "You have a good pair to split.";
+                    }
+                    else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
+                        (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
+                        result = "Stand";
+                        this.recommended_text = "You have a great hand. Stand!";
+                    }
+                    else {
+                        result = "None";
+                        this.recommended_text = "-";
+                    }
+                }
+                else if (this.dealer.card_shown === 3 || this.dealer.card_shown === 4) {
+                    if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 5)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 5))) {
+                        result = "Double Down";
+                        this.recommended_text = "Treat the [A] card like a 1 and double down. The odds are in your favor!";
+                    }
+                    else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
+                        result = "Stand";
+                        this.recommended_text = "Treat the [A] card like an 11. You have a decent hand that is not worth the risk of another hit.";
+                    }
+                    else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
+                        (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
+                        (this.player.card_shown === 1 && this.player.cards[0] === 1) ||
+                        (this.player.card_shown === 2 && this.player.cards[0] === 2)) {
+                        result = "Split";
+                        this.recommended_text = "This is the perfect pair to split!";
+                    }
+                    else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
+                        result = "Double Down";
+                        this.recommended_text = "Go big or go home!";
+                    }
+                    else if (((this.player.card_shown >= 4 && this.player.card_shown <= 7) &&
+                        (this.player.cards[0] >= 4 && this.player.cards[0] <= 7)) &&
+                        this.player.card_shown === this.player.cards[0]) {
+                        result = "Split";
+                        this.recommended_text = "You have a good pair to split.";
+                    }
+                    else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
+                        (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
+                        result = "Stand";
+                        this.recommended_text = "You have a great hand. Stand!";
+                    }
+                    else if((this.player.card_shown >= 0 && this.player.card_shown <= 6) &&
+                        (this.player.cards[0] >= 0 && this.player.cards[0] <= 6)) {
+                            result = 'Hit';
+                            this.recommended_text = "Your hand is too low. Take another card!";
+                    }
+                    else {
+                        result = "None";
+                        this.recommended_text = "-";
+                    }
+                }
+                else if (this.dealer.card_shown === 5) {
+                    if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 4)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 4))) {
+                        result = "Hit";
+                        this.recommended_text = "Treat the [A] card like a 1. Take another card because your dealer could very well bust from this!";
+                    }
+                    else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 5 && this.player.cards[0] <= 8)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 5 && this.player.card_shown <= 8))) {
+                        result = "Stand";
+                        this.recommended_text = "Treat the [A] card like an 11. You have a decent hand that is not worth the risk of another hit.";
+                    }
+                    else if ((this.player.card_shown === 12 && this.player.cards[0] === 12) ||
+                        (this.player.card_shown === 0 && this.player.cards[0] === 0) ||
+                        (this.player.card_shown === 1 && this.player.cards[0] === 1)) {
+                        result = "Split";
+                        this.recommended_text = "This is the perfect pair to split!";               
+                    }
+                    else if((this.player.card_shown >= 0 && this.player.card_shown <= 6) &&
+                        (this.player.cards[0] >= 0 && this.player.cards[0] <= 6)) {
+                            result = 'Hit';
+                            this.recommended_text = "Your hand is too low. Take another card!";
+                    }
+                    else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
+                        result = "Double Down";
+                        this.recommended_text = "Go big or go home!";
+                    }
+                    else if (((this.player.card_shown >= 5 && this.player.card_shown <= 6) &&
+                        (this.player.cards[0] >= 5 && this.player.cards[0] <= 6)) &&
+                        this.player.card_shown === this.player.cards[0]) {
+                        result = "Split";
+                        this.recommended_text = "You have a good pair to split.";
+                    }
+                    else if ((this.player.card_shown >= 7 && this.player.card_shown <= 11) &&
+                        (this.player.cards[0] >= 7 && this.player.cards[0] <= 11)) {
+                        result = "Stand";
+                        this.recommended_text = "You have a great hand. Stand!";
+                    }
+                    else {
+                        result = "None";
+                        this.recommended_text = "-";
+                    }
+                }
+                else if (this.dealer.card_shown === 6) {
+                    if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 4)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 4))) {
+                        result = "Hit";
+                        this.recommended_text = "Treat the [A] card like a 1. Take another card because your dealer could very well bust from this!";
+                    }
+                    else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 5 && this.player.cards[0] <= 8)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 5 && this.player.card_shown <= 8))) {
+                        result = "Stand";
+                        this.recommended_text = "Treat the [A] card like an 11. You have a decent hand that is not worth the risk of another hit.";
+                    }
+                    else if (this.player.card_shown === 12 && this.player.cards[0] === 12) {
+                        result = "Split";
+                        this.recommended_text = "You have the perfect pair to split.";
+                    }
+                    else if ((this.player.card_shown >= 0 && this.player.card_shown <= 5) &&
+                        (this.player.cards[0] >= 0 && this.player.cards[0] <= 5) &&
+                        (this.player.card_shown === this.player.cards[0])) {
+                        result = "Hit";
+                        this.recommended_text = "Don't split. Your hand is too low. Take another card!";
+                    }
+                    else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
+                        result = "Double Down";
+                        this.recommended_text = "Go big or go home!";
+                    }
+                    else if ((this.player.card_shown >= 6 && this.player.card_shown <= 7) &&
+                        (this.player.cards[0] >= 6 && this.player.cards[0] <= 7) &&
+                        this.player.card_shown === this.player.cards[0]) {
+                        result = "Split";
+                        this.recommended_text = "You have a good pair to split.";
+                    }
+                    else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
+                        (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
+                        result = "Stand";
+                        this.recommended_text = "You have a great hand. Stand!";                   
+                    }
+                    else {
+                        result = "None";
+                        this.recommended_text = "-";                   
+                    }
+                }
+                else if (this.dealer.card_shown === 7) {
+                    if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 5)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 5))) {
+                        result = "Hit";
+                        this.recommended_text = "Treat the [A] card like a 1. Take another card because your dealer could very well bust from this!";
+                    }
+                    else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
+                        result = "Stand";
+                        this.recommended_text = "Treat the [A] card like an 11. You have a decent hand that is not worth the risk of another hit.";
+                    }
+                    else if (this.player.card_shown === 12 && this.player.cards[0] === 12) {
+                        result = "Split";
+                        this.recommended_text = "You have the perfect pair to split.";
+                    }
+                    else if ((this.player.card_shown === 0 && this.player.cards[0] === 0) ||
+                        (this.player.card_shown === 1 && this.player.cards[0] === 1) ||
+                        (this.player.card_shown === 2 && this.player.cards[0] === 2) ||
+                        (this.player.card_shown === 4 && this.player.cards[0] === 4) ||
+                        (this.player.card_shown === 5 && this.player.cards[0] === 5)) {
+                        result = "Hit";
+                        this.recommended_text = "Don't split. Your hand is too low. Take another card!";
+                    }
+                    else if (this.player.card_shown === 3 && this.player.cards[0] === 3) {
+                        result = "Double Down";
+                        this.recommended_text = "Go big or go home!";
+                    }
+                    else if (((this.player.card_shown >= 6 && this.player.card_shown <= 7) &&
+                        (this.player.cards[0] >= 6 && this.player.cards[0] <= 7)) &&
+                        this.player.card_shown === this.player.cards[0]) {
+                        result = "Split";
+                        this.recommended_text = "You have a good pair to split.";
+                    }
+                    else if ((this.player.card_shown >= 8 && this.player.card_shown <= 11) &&
+                        (this.player.cards[0] >= 8 && this.player.cards[0] <= 11)) {
+                        result = "Stand";
+                        this.recommended_text = "You have a great hand. Stand!";                   
+                    }
+                    else {
+                        result = "None";
+                        this.recommended_text = "-";                   
+                    }
+                }
+                else if (this.dealer.card_shown >= 8 && this.dealer.card_shown <= 12) {
+                    if ((this.player.card_shown === 12 && (this.player.cards[0] >= 0 && this.player.cards[0] <= 5)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 0 && this.player.card_shown <= 5))) {
+                        result = "Hit";
+                        this.recommended_text = "Treat the [A] card like a 1. Take another card because your dealer could very well bust from this!";
+                    }
+                    else if ((this.player.card_shown === 12 && (this.player.cards[0] >= 6 && this.player.cards[0] <= 8)) ||
+                        (this.player.cards[0] === 12 && (this.player.card_shown >= 6 && this.player.card_shown <= 8))) {
+                        result = "Stand";
+                        this.recommended_text = "Treat the [A] card like an 11. You have a decent hand that is not worth the risk of another hit.";
+                    }
+                    else if ((this.player.card_shown >= 0 && this.player.card_shown <= 5) &&
+                        (this.player.cards[0] >= 0 && this.player.cards[0] <= 5) &&
+                        this.player.card_shown === this.player.cards[0]) {
+                        result = "Hit";
+                        this.recommended_text = "Don't split. Your hand is too low. Take another card!";
+                    }
+                    else if ((this.player.card_shown === 6 && this.player.cards[0] === 6) ||
+                        (this.player.card_shown === 12 && this.player.cards[0] === 12)) {
+                        result = "Split";
+                        this.recommended_text = "You have a good pair to split.";                   
+                    }
+                    else if ((this.player.card_shown >= 7 && this.player.card_shown <= 11) &&
+                        (this.player.cards[0] >= 7 && this.player.cards[0] <= 11)) {
+                        result = "Stand";
+                        this.recommended_text = "You have a great hand. Stand!";                   
+                    }
+                    else {
+                        result = "None";
+                        this.recommended_text = "-";                   
+                    }
+                }
+                if (result === "None") {
+                    if (player_hand < 15) {
+                        result = "Hit";
+                        this.recommended_text = "Your hand is too low. Take another card!"
+                    }
+                    else {
+                        result = "Stand";
+                        this.recommended_text = "You might bust at the next hit. Take a stand!"
+                    }
+                }
             }
         }
 
